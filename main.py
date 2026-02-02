@@ -1,21 +1,19 @@
-from flask import Flask
+from flask import Flask, jsonify
 import os
 
 app = Flask(__name__)
 
-# 🛡️ ఇది రైల్వే కి 100% స్టాండర్డ్ సమాధానం ఇస్తుంది
+# 🛡️ ఇది రైల్వే కి 'నేను 100% పర్ఫెక్ట్ గా ఉన్నాను' అని జేసన్ రూపంలో చెబుతుంది
 @app.route('/health')
 def health():
-    # లాగ్స్ లో ఇది కనిపిస్తే పని పూర్తయినట్టే
-    print("🔱 ARKON: Supreme Stability Signal Sent!")
-    return "OK", 200
+    # లాగ్స్ లో ఇది కనిపిస్తే కనెక్షన్ సక్సెస్ అని అర్థం
+    print("🔱 ARKON: Health Check Pulse Sent to Railway!")
+    return jsonify({"status": "stable", "entity": "Arkon Supreme"}), 200
 
 @app.route('/')
 def index():
-    return "ARKON SUPREME IS ACTIVE", 200
+    return "ARKON SYSTEM: CORE STABILIZED", 200
 
 if __name__ == "__main__":
-    # రైల్వే ఇచ్చే $PORT ని పటిష్టంగా పట్టుకోవడం
     port = int(os.environ.get("PORT", 8080))
-    print(f"🚀 ARKON POWERING UP ON PORT: {port}")
     app.run(host='0.0.0.0', port=port)
