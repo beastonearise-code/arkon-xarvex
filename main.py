@@ -22,6 +22,6 @@ def chat():
     return jsonify({"response": response})
 
 if __name__ == "__main__":
-    # రైల్వే పోర్ట్ ఖచ్చితంగా 8080 లేదా అది ఇచ్చే పోర్ట్ వాడాలి
+    # రైల్వే పోర్ట్ ఖచ్చితంగా అది ఇచ్చే పోర్ట్ వాడాలి
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
