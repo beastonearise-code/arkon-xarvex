@@ -4,11 +4,10 @@ import arkon_app_core
 
 app = Flask(__name__)
 
-# 🛡️ STABILITY: రైల్వే 'Are you alive?' అని అడిగితే 'Yes' అని చెబుతుంది
-@app.route('/healthz')
+# 🛡️ LOGICAL SHIELD: రైల్వే ఈ రూట్ ని పింగ్ చేసినప్పుడు 200 OK ఇస్తుంది
 @app.route('/health')
 def health():
-    return "ARKON IS ONLINE", 200
+    return "ARKON SYSTEM: ONLINE", 200
 
 @app.route('/')
 def index():
@@ -16,12 +15,15 @@ def index():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    data = request.get_json()
-    user_input = data.get("message", "")
-    response = arkon_app_core.process_command(user_input)
-    return jsonify({"response": response})
+    try:
+        data = request.get_json()
+        user_input = data.get("message", "")
+        response = arkon_app_core.process_command(user_input)
+        return jsonify({"response": response})
+    except Exception as e:
+        return jsonify({"response": f"ARKON LOGIC ERROR: {str(e)}"})
 
 if __name__ == "__main__":
-    # రైల్వే పోర్ట్ ఖచ్చితంగా అది ఇచ్చే పోర్ట్ వాడాలి
+    # రైల్వే ఇచ్చే PORT ని ఖచ్చితంగా వాడాలి
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
