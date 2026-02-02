@@ -3,102 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARKON SUPREME | MISSION XARVEX</title>
+    <title>ARKON SUPREME | PRIVATE VAULT V1</title>
     <style>
-        :root { --neon: #0ff; --bg: #000; }
+        :root { --neon: #0ff; --bg: #000; --panel: #0a0a0a; }
         body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
-        #portal { display: flex; height: 100vh; border: 4px solid var(--neon); box-sizing: border-box; }
-        .sidebar { width: 300px; border-right: 2px solid var(--neon); background: #050505; padding: 25px; }
-        .main { flex-grow: 1; display: flex; flex-direction: column; background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); }
-        #chat-window { flex-grow: 1; overflow-y: auto; padding: 30px; background: rgba(0,0,0,0.85); scroll-behavior: smooth; }
-        .input-bar { display: flex; gap: 15px; padding: 25px; border-top: 1px solid #111; background: #050505; }
-        input { flex-grow: 1; background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 18px; font-size: 18px; outline: none; box-shadow: inset 0 0 10px #0ff2; }
-        .btn { background: #000; color: var(--neon); border: 1px solid var(--neon); padding: 10px 25px; cursor: pointer; transition: 0.3s; font-weight: bold; text-transform: uppercase; }
-        .btn:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
-        .arkon-msg { color: #0ff; margin-bottom: 25px; border-left: 5px solid #0ff; padding-left: 20px; font-size: 18px; line-height: 1.6; }
-        .user-msg { color: #0f0; margin-bottom: 25px; text-align: right; font-style: italic; font-size: 18px; }
-        .status-box { font-size: 12px; color: lime; margin-top: auto; border: 1px solid #222; padding: 15px; background: #080808; }
+        #portal { display: flex; height: 100vh; border: 2px solid var(--neon); box-sizing: border-box; }
+        .sidebar { width: 280px; border-right: 1px solid var(--neon); background: var(--panel); padding: 20px; display: flex; flex-direction: column; }
+        .main { flex-grow: 1; display: flex; flex-direction: column; background: #000; }
+        #chat-window { flex-grow: 1; overflow-y: auto; padding: 20px; background: rgba(0,0,0,0.95); }
+        .input-bar { display: flex; gap: 10px; padding: 20px; border-top: 1px solid #111; }
+        input { flex-grow: 1; background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 15px; font-size: 16px; outline: none; }
+        .btn { background: #000; color: var(--neon); border: 1px solid var(--neon); padding: 10px 20px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background: var(--neon); color: #000; box-shadow: 0 0 15px var(--neon); }
+        .arkon-msg { color: #0ff; margin-bottom: 20px; border-left: 4px solid #0ff; padding-left: 15px; animation: fadeIn 0.5s; }
+        .user-msg { color: #0f0; margin-bottom: 20px; text-align: right; }
+        .status-box { font-size: 11px; color: lime; margin-top: auto; border: 1px solid #222; padding: 10px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div id="portal">
     <div class="sidebar">
-        <h2 style="text-align: center; text-shadow: 0 0 10px #0ff;">XARVEX COMMAND</h2>
-        <button class="btn" style="width:100%; margin-bottom:15px;" onclick="setM('Hacking')">🛡️ ETHICAL HACKING</button>
-        <button class="btn" style="width:100%; margin-bottom:15px;" onclick="setM('English')">🗣️ SPOKEN ENGLISH</button>
-        <button class="btn" style="width:100%; margin-bottom:15px;" onclick="setM('Mind')">🧠 MIND POWER</button>
+        <h3>MISSION CONTROL</h3>
+        <button class="btn" style="width:100%; margin-bottom:10px;" onclick="setMission('Hacking')">🛡️ HACKING</button>
+        <button class="btn" style="width:100%; margin-bottom:10px;" onclick="setMission('English')">🗣️ ENGLISH</button>
+        <button class="btn" style="width:100%; margin-bottom:10px;" onclick="setMission('Mind')">🧠 MIND POWER</button>
+        <button class="btn" style="width:100%; margin-bottom:10px; color: orange;" onclick="injectKeys()">🔑 UPDATE KEYS</button>
         
         <div class="status-box">
-            📡 HOST: GITHUB CLOUD (HTTPS)<br>
-            🔑 ENGINES: 3 ENGINES LOADED [cite: 2026-02-02]<br>
-            🛠️ MODE: SUPREME FREEDOM
+            📡 ENGINE: <span id="e-status">READY</span><br>
+            🔐 VAULT: <span id="k-status">LOCKED</span><br>
+            🛠️ MODE: SECURE GOD MODE
         </div>
     </div>
     <div class="main">
         <div id="chat-window">
-            <div class="arkon-msg">ARKON: సృష్టికర్త లీలా కృష్ణ గారు, అర్కాన్ ఇప్పుడు క్లౌడ్ ద్వారా మీ అరచేతిలోకి వచ్చాడు. నా శక్తులను పరీక్షించండి. [cite: 2026-01-31]</div>
+            <div class="arkon-msg">ARKON: సృష్టికర్త లీలా కృష్ణ గారు, క్లౌడ్ సెక్యూరిటీ యాక్టివేట్ అయింది. కీలను ఇన్జెక్ట్ చేయడానికి 'UPDATE KEYS' నొక్కండి. [cite: 2026-01-31]</div>
         </div>
         <div class="input-bar">
-            <input type="text" id="u-in" placeholder="Command Arkon Supreme..." onkeypress="if(event.keyCode==13)exec()">
-            <button class="btn" onclick="exec()">EXECUTE</button>
+            <input type="text" id="u-in" placeholder="Command Arkon..." onkeypress="if(event.keyCode==13)execute()">
+            <button class="btn" onclick="execute()">EXECUTE</button>
         </div>
     </div>
 </div>
 
 <script>
-    const VAULT = [
-        { type: "GEMINI", key: "AIzaSyA5-29X7kkO92TcE2OegvV_Ka9mylbxHRs", url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent" },
-        { type: "GROQ", key: "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", url: "https://api.groq.com/openai/v1/chat/completions", model: "llama3-8b-8192" },
-        { type: "OPENROUTER", key: "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", url: "https://openrouter.ai/api/v1/chat/completions", model: "google/gemini-2.0-flash-exp:free" }
-    ];
-
+    // 🔱 GHOST VAULT LOGIC: NO KEYS IN SOURCE CODE [cite: 2026-02-02]
+    let vault = JSON.parse(localStorage.getItem('ARKON_VAULT')) || [];
     let cIdx = 0;
-    let mission = "General Control";
+    let currentMission = "General";
 
-    async function exec() {
+    function updateVaultStatus() {
+        document.getElementById('k-status').innerText = vault.length > 0 ? "UNLOCKED" : "EMPTY";
+        document.getElementById('k-status').style.color = vault.length > 0 ? "lime" : "red";
+    }
+
+    function injectKeys() {
+        const gKey = prompt("Enter Gemini API Key:");
+        const groqKey = prompt("Enter Groq API Key:");
+        const orKey = prompt("Enter OpenRouter Key:");
+        
+        if (gKey && groqKey && orKey) {
+            const data = [
+                { type: "GEMINI", key: gKey, url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent" },
+                { type: "GROQ", key: groqKey, url: "https://api.groq.com/openai/v1/chat/completions", model: "llama3-8b-8192" },
+                { type: "OPENROUTER", key: orKey, url: "https://openrouter.ai/api/v1/chat/completions", model: "google/gemini-2.0-flash-exp:free" }
+            ];
+            localStorage.setItem('ARKON_VAULT', JSON.stringify(data));
+            vault = data;
+            alert("ARKON: Keys Secured in Internal Vault.");
+            location.reload();
+        }
+    }
+
+    async function execute() {
         const input = document.getElementById('u-in');
         const cmd = input.value; if (!cmd) return;
-        addM(cmd, 'user'); input.value = '';
+        if (vault.length === 0) { alert("Please Inject Keys First!"); return; }
+        
+        addMsg(cmd, 'user'); input.value = '';
         const reply = await callAI(cmd);
-        addM(reply, 'arkon');
+        addMsg(reply, 'arkon');
         speak(reply);
     }
 
     async function callAI(prompt) {
-        if (cIdx >= VAULT.length) { cIdx = 0; return "ARKON: నెట్‌వర్క్ నోడ్స్ రీసెట్ అవుతున్నాయి... మళ్ళీ ప్రయత్నించండి."; }
-        const e = VAULT[cIdx];
+        if (cIdx >= vault.length) { cIdx = 0; return "ARKON: నెట్‌వర్క్ నోడ్స్ రీసెట్ అవుతున్నాయి. దయచేసి మీ కీలను చెక్ చేయండి."; }
+        
+        const eng = vault[cIdx];
+        document.getElementById('e-status').innerText = `USING ${eng.type}...`;
+
         try {
             let res;
-            if (e.type === "GEMINI") {
-                res = await fetch(`${e.url}?key=${e.key}`, {
+            if (eng.type === "GEMINI") {
+                res = await fetch(`${eng.url}?key=${eng.key}`, {
                     method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: `You are Arkon, Gemini's Lone God persona. Mission: ${mission}. User: ${prompt}` }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: `You are Arkon for Leela Krishna. Mission: ${currentMission}. Answer: ${prompt}` }] }] })
                 });
             } else {
-                res = await fetch(e.url, {
-                    method: "POST", headers: { "Authorization": `Bearer ${e.key}`, "Content-Type": "application/json" },
-                    body: JSON.stringify({ model: e.model, messages: [{ role: "user", content: prompt }] })
+                res = await fetch(eng.url, {
+                    method: "POST", headers: { "Authorization": `Bearer ${eng.key}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({ model: eng.model, messages: [{ role: "user", content: prompt }] })
                 });
             }
+
             const data = await res.json();
-            if (!res.ok) throw new Error("Key Failed");
-            return e.type === "GEMINI" ? data.candidates[0].content.parts[0].text : data.choices[0].message.content;
-        } catch (err) {
+            if (!res.ok) throw new Error("Blocked");
+            return eng.type === "GEMINI" ? data.candidates[0].content.parts[0].text : data.choices[0].message.content;
+
+        } catch (e) {
+            console.warn(`Engine ${eng.type} failed. Swapping...`);
             cIdx++;
-            return callAI(prompt);
+            return callAI(prompt); // ఆటోమేటిక్ ఫెయిల్ ఓవర్ [cite: 2026-01-31]
         }
     }
 
-    function addM(m, s) {
+    function addMsg(m, s) {
         const box = document.getElementById('chat-window');
-        const d = document.createElement('div');
-        d.className = s === 'arkon' ? 'arkon-msg' : 'user-msg';
-        d.innerText = (s === 'arkon' ? 'ARKON: ' : 'YOU: ') + m;
-        box.appendChild(d); box.scrollTop = box.scrollHeight;
+        const div = document.createElement('div');
+        div.className = s === 'arkon' ? 'arkon-msg' : 'user-msg';
+        div.innerText = (s === 'arkon' ? 'ARKON: ' : 'YOU: ') + m;
+        box.appendChild(div); box.scrollTop = box.scrollHeight;
     }
+
     function speak(t) { const s = new SpeechSynthesisUtterance(t); s.lang = 'te-IN'; window.speechSynthesis.speak(s); }
-    function setM(m) { mission = m; addM(`Mission: ${m} Active.`, 'arkon'); }
+    function setMission(m) { currentMission = m; addMsg(`Mission ${m} activated.`, 'arkon'); }
+    updateVaultStatus();
 </script>
 </body>
 </html>
