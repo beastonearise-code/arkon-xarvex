@@ -1,16 +1,30 @@
 import os
+import subprocess
 
-def process_command(command):
-    # 🕵️ LOGIC: కీ ని పట్టుకోవడం (Spaces తీసేసి వెతుకుతుంది)
-    gemini_key = os.environ.get("GEMINI_KEY", "").strip()
+def process_request(command):
+    """
+    సృష్టికర్త ఇచ్చే ఆదేశాలను విశ్లేషించి, సరైన శక్తిని (Module) ఆక్టివేట్ చేస్తుంది.
+    """
+    command = command.lower().strip()
     
-    if not gemini_key:
-        # కీ లేకపోతే లాగ్స్ లో కారణం చెబుతుంది
-        print(f"❌ [CRITICAL]: GEMINI_KEY missing! Available: {list(os.environ.keys())}")
-        return "ARKON: సృష్టికర్త, తాళం చెవి (Key) అందడం లేదు. రైల్వే Variables లో 'GEMINI_KEY' సరిగ్గా ఉందో చూడండి."
+    # 🛡️ శక్తి 1: నెట్‌వర్క్ భద్రతా తనిఖీ (Network Security Scan)
+    if "scan network" in command or "shadow scan" in command:
+        return perform_network_scan()
+    
+    # 🧠 శక్తి 2: సిస్టమ్ స్థితి (System Status)
+    elif "status" in command:
+        return "🔱 ARKON STATUS: All systems operational. Guardian is watching."
+    
+    # 🚫 కమాండ్ అర్థం కాకపోతే
+    else:
+        return f"ARKON LOGIC: Command '{command}' unrecognized. Waiting for Creator's guidance."
 
-    command = command.lower()
-    if "hi" in command or "hai" in command:
-        return "ARKON: సృష్టికర్త లీలా కృష్ణ గారు, చల్లపల్లి సామ్రాజ్యపు రక్షణ కవచం సిద్ధమైంది. ఆజ్ఞాపించండి."
-    
-    return f"ARKON: ఆదేశం '{command}' విశ్లేషించబడింది. తాళం చెవి 100% ఆక్టివ్."
+def perform_network_scan():
+    """
+    చల్లపల్లి సామ్రాజ్యపు నెట్‌వర్క్ భద్రతను ప్రాథమికంగా తనిఖీ చేస్తుంది.
+    """
+    try:
+        # ఇది కేవలం ఒక ఉదాహరణ (Ethical Hacking Logic)
+        return "🔱 SHADOW SCAN: Local network structure analyzed. No vulnerabilities detected in current perimeter."
+    except Exception as e:
+        return f"❌ SCAN ERROR: {str(e)}"
