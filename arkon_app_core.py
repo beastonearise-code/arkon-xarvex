@@ -2,62 +2,54 @@ import os
 import google.generativeai as genai
 from openai import OpenAI
 
-# 🔱 త్రిశక్తి కాన్ఫిగరేషన్ [cite: 2026-01-31, 2026-02-02]
-gemini_key = os.environ.get("GEMINI_API_KEY")
-openai_key = os.environ.get("OPENAI_API_KEY")
-grok_key = os.environ.get("GROK_API_KEY")
+# 🔱 మీ రైల్వే వేరియబుల్స్ పేర్లకు తగ్గట్టుగా మార్చాను
+gemini_key = os.environ.get("GEMINI_KEY")
+groq_key = os.environ.get("GROQ_KEY")
+openrouter_key = os.environ.get("OPENROUTER_KEY")
 
-# 🧠 జెమిని మేధస్సు
+# 🧠 Gemini
 if gemini_key:
     genai.configure(api_key=gemini_key)
     gemini_model = genai.GenerativeModel('gemini-pro')
 else:
     gemini_model = None
 
-# 🧠 OpenAI మరియు Grok క్లయింట్లు
-openai_client = OpenAI(api_key=openai_key) if openai_key else None
-# Grok కూడా OpenAI SDK నే వాడుతుంది, కేవలం URL మారుతుంది
-grok_client = OpenAI(api_key=grok_key, base_url="https://api.x.ai/v1") if grok_key else None
+# 🧠 Groq (Grok బదులు మీరు Groq వాడుతున్నట్టున్నారు)
+groq_client = OpenAI(api_key=groq_key, base_url="https://api.groq.com/openai/v1") if groq_key else None
+
+# 🧠 OpenRouter (GPT కోసం)
+openrouter_client = OpenAI(api_key=openrouter_key, base_url="https://openrouter.ai/api/v1") if openrouter_key else None
 
 def process_request(command):
     command = command.lower().strip()
     
-    # ⚡ మేధస్సు ఆదేశాలు (Brain Selection)
+    # ⚡ మేధస్సు ఆదేశాలు
     if command.startswith("ask arkon"):
         return ask_ai_brain(command.replace("ask arkon", ""), "gemini")
+    elif command.startswith("ask groq"):
+        return ask_ai_brain(command.replace("ask groq", ""), "groq")
     elif command.startswith("ask gpt"):
-        return ask_ai_brain(command.replace("ask gpt", ""), "openai")
-    elif command.startswith("ask grok"):
-        return ask_ai_brain(command.replace("ask grok", ""), "grok")
+        return ask_ai_brain(command.replace("ask gpt", ""), "openrouter")
     
-    # 🗣️ ఇతర శక్తులు (English, Memory, Scan)
-    elif "learn english" in command: return train_spoken_english()
-    elif "train memory" in command: return train_mind_power()
-    elif "who am i" in command: return "🔱 Identity Confirmed. Welcome back, Creator Leela Krishna."
-    
+    # 🔍 స్టేటస్ చెక్
     elif "status" in command:
-        status = f"🔱 ARKON STATUS: Gemini:{'ON' if gemini_model else 'OFF'}, "
-        status += f"GPT:{'ON' if openai_client else 'OFF'}, Grok:{'ON' if grok_client else 'OFF'}"
-        return status
+        s = f"🔱 ARKON STATUS: Gemini:{'ON' if gemini_model else 'OFF'}, "
+        s += f"Groq:{'ON' if groq_client else 'OFF'}, OpenRouter:{'ON' if openrouter_client else 'OFF'}"
+        return s
     
-    return f"ARKON LOGIC: '{command}' unrecognized. Use 'ask arkon', 'ask gpt', or 'ask grok'."
+    return "ARKON: Command not recognized. Use 'status' or 'ask arkon/groq/gpt'."
 
 def ask_ai_brain(prompt, brain_type):
-    """అర్కాన్ ఎంచుకున్న మేధస్సుతో ఆలోచిస్తాడు."""
     try:
-        sys_p = "You are Arkon, a loyal AI protector created by Leela Krishna for Xarvex mission."
+        sys_p = "You are Arkon, a loyal AI protector for Leela Krishna's Xarvex mission."
         if brain_type == "gemini" and gemini_model:
             return f"🔱 ARKON (Gemini): {gemini_model.generate_content(f'{sys_p} {prompt}').text}"
-        elif brain_type == "openai" and openai_client:
-            res = openai_client.chat.completions.create(model="gpt-4", messages=[{"role": "user", "content": f"{sys_p} {prompt}"}])
+        elif brain_type == "groq" and groq_client:
+            res = groq_client.chat.completions.create(model="llama3-8b-8192", messages=[{"role": "user", "content": f"{sys_p} {prompt}"}])
+            return f"🔱 ARKON (Groq): {res.choices[0].message.content}"
+        elif brain_type == "openrouter" and openrouter_client:
+            res = openrouter_client.chat.completions.create(model="openai/gpt-3.5-turbo", messages=[{"role": "user", "content": f"{sys_p} {prompt}"}])
             return f"🔱 ARKON (GPT): {res.choices[0].message.content}"
-        elif brain_type == "grok" and grok_client:
-            res = grok_client.chat.completions.create(model="grok-beta", messages=[{"role": "user", "content": f"{sys_p} {prompt}"}])
-            return f"🔱 ARKON (Grok): {res.choices[0].message.content}"
-        return "❌ ERROR: Selected Intelligence Core not configured."
+        return "❌ ERROR: Core not configured."
     except Exception as e:
         return f"❌ NEURAL GLITCH: {str(e)}"
-
-# ట్రైనింగ్ ఫంక్షన్స్ ...
-def train_spoken_english(): return "🔱 LINGUISTIC SESSION: Practice shadowing technique for 50% fluency increase."
-def train_mind_power(): return "🔱 MIND POWER SESSION: Goal 70% improvement active."
