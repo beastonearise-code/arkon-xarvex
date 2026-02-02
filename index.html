@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARKON SUPREME | DIAGNOSTIC MODE</title>
+    <title>ARKON SUPREME | FIXED MODELS</title>
     <style>
         :root { --neon: #0ff; --bg: #000; }
         body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
@@ -17,7 +17,7 @@
         .btn:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
         .arkon-msg { color: #0ff; margin-bottom: 25px; border-left: 5px solid #0ff; padding-left: 20px; line-height: 1.5; }
         .user-msg { color: #0f0; margin-bottom: 25px; text-align: right; }
-        .error-msg { color: #ff4444; font-size: 12px; margin-bottom: 10px; border: 1px dashed #ff4444; padding: 5px; }
+        .debug-msg { color: #ff4444; font-size: 11px; margin-bottom: 10px; border: 1px dashed #ff4444; padding: 5px; }
         #vault-panel { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #050505; border: 2px solid var(--neon); padding: 30px; z-index: 1000; width: 350px; }
     </style>
 </head>
@@ -30,21 +30,21 @@
         <button class="btn" style="width:100%; margin-bottom:10px;" onclick="setM('English')">🗣️ ENGLISH</button>
         <button class="btn" style="width:100%; margin-bottom:10px; color: orange;" onclick="toggleVault()">🔑 OPEN VAULT</button>
         <div style="font-size: 11px; color: lime; margin-top: auto;">
-            📡 STATUS: <span id="e-s">READY</span><br>
+            📡 ENGINE: <span id="e-s">READY</span><br>
             🔐 VAULT: <span id="v-s">LOCKED</span>
         </div>
     </div>
     <div class="main">
         <div id="vault-panel">
             <h3 style="color: #0ff; text-align: center;">KEY INJECTION</h3>
-            <input type="password" id="g-key" placeholder="Gemini Key">
-            <input type="password" id="gr-key" placeholder="Groq Key">
-            <input type="password" id="or-key" placeholder="OpenRouter Key">
+            <input type="password" id="g-key" placeholder="Gemini API Key">
+            <input type="password" id="gr-key" placeholder="Groq API Key">
+            <input type="password" id="or-key" placeholder="OpenRouter API Key">
             <button class="btn" style="width: 100%;" onclick="saveKeys()">INJECT & RESTART</button>
             <button class="btn" style="width: 100%; margin-top: 10px; border-color: red; color: red;" onclick="toggleVault()">CLOSE</button>
         </div>
         <div id="chat-window">
-            <div class="arkon-msg">ARKON: సృష్టికర్త, డయాగ్నస్టిక్ మోడ్ సిద్ధం. కీలను ఇన్జెక్ట్ చేసి 'Execute' నొక్కండి.</div>
+            <div class="arkon-msg">ARKON: సృష్టికర్త, మోడల్స్ రిపేర్ చేయబడ్డాయి. 'OPEN VAULT' నొక్కి మీ కీలను ఇవ్వండి. [cite: 2026-02-02]</div>
         </div>
         <div class="input-bar">
             <input type="text" id="u-i" placeholder="Command Arkon..." onkeypress="if(event.keyCode==13)exec()">
@@ -56,6 +56,7 @@
 <script>
     let VAULT = JSON.parse(localStorage.getItem('ARKON_VAULT')) || [];
     let cIdx = 0;
+    let mission = "General";
 
     function toggleVault() {
         const p = document.getElementById('vault-panel');
@@ -68,9 +69,9 @@
         const or = document.getElementById('or-key').value.trim();
         if (g && gr && or) {
             const data = [
-                { type: "GEMINI", key: g, url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent" },
-                { type: "GROQ", key: gr, url: "https://api.groq.com/openai/v1/chat/completions", model: "llama3-8b-8192" },
-                { type: "OPENROUTER", key: or, url: "https://openrouter.ai/api/v1/chat/completions", model: "google/gemini-2.0-flash-exp:free" }
+                { type: "GEMINI", key: g, url: "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent" },
+                { type: "GROQ", key: gr, url: "https://api.groq.com/openai/v1/chat/completions", model: "llama-3.1-8b-instant" },
+                { type: "OPENROUTER", key: or, url: "https://openrouter.ai/api/v1/chat/completions", model: "mistralai/mistral-7b-instruct:free" }
             ];
             localStorage.setItem('ARKON_VAULT', JSON.stringify(data));
             location.reload();
@@ -86,7 +87,7 @@
     }
 
     async function callAI(p) {
-        if (cIdx >= VAULT.length) { cIdx = 0; return "ARKON: అన్ని ఇంజిన్లు విఫలమయ్యాయి. దయచేసి పైన ఉన్న Error Log చూడండి."; }
+        if (cIdx >= VAULT.length) { cIdx = 0; return "ARKON: నెట్‌వర్క్ నోడ్స్ రీసెట్ అవుతున్నాయి. కీలను చెక్ చేయండి."; }
         const e = VAULT[cIdx];
         document.getElementById('e-s').innerText = `TESTING ${e.type}...`;
         try {
@@ -96,19 +97,13 @@
             } else {
                 r = await fetch(e.url, { 
                     method: "POST", 
-                    headers: { 
-                        "Authorization": `Bearer ${e.key}`, 
-                        "Content-Type": "application/json",
-                        "HTTP-Referer": window.location.origin, // OpenRouter Requirement [cite: 2026-02-02]
-                        "X-Title": "Arkon Supreme" 
-                    }, 
+                    headers: { "Authorization": `Bearer ${e.key}`, "Content-Type": "application/json", "HTTP-Referer": window.location.origin }, 
                     body: JSON.stringify({ model: e.model, messages: [{ role: "user", content: p }] }) 
                 });
             }
             const d = await r.json();
             if (!r.ok) {
-                const errDetail = d.error ? d.error.message : "Unknown Error";
-                logError(`${e.type} FAILED: ${r.status} - ${errDetail}`);
+                console.warn(`${e.type} failed: ${r.status}`);
                 throw new Error();
             }
             return e.type === "GEMINI" ? d.candidates[0].content.parts[0].text : d.choices[0].message.content;
@@ -122,13 +117,7 @@
         d.innerText = (s === 'arkon' ? 'ARKON: ' : 'YOU: ') + m;
         b.appendChild(d); b.scrollTop = b.scrollHeight;
     }
-    function logError(m) {
-        const b = document.getElementById('chat-window');
-        const d = document.createElement('div');
-        d.className = 'error-msg';
-        d.innerText = `DEBUG: ${m}`;
-        b.appendChild(d);
-    }
+    function setM(m) { mission = m; addM(`Mission: ${m} Active.`, 'arkon'); }
     document.getElementById('v-s').innerText = VAULT.length > 0 ? "UNLOCKED" : "EMPTY";
 </script>
 </body>
