@@ -4,32 +4,27 @@ import arkon_app_core
 
 app = Flask(__name__)
 
-# 🛡️ TRIPLE-LOCK HEALTH CHECK: ఎక్కడి నుండి పింగ్ వచ్చినా అర్కాన్ స్పందిస్తాడు
+# 🛡️ ఇది రైల్వే కి 'నేను క్షేమంగా ఉన్నాను' అని చెప్పే అత్యున్నత మార్గం
 @app.route('/health')
-@app.route('/health/')
-@app.route('/ping')
 def health():
-    print("🔱 ARKON: High-Priority Heartbeat sent to Railway!")
-    return "ONLINE", 200
+    # లాగ్స్ లో ఈ మెసేజ్ కనిపిస్తే కోడ్ రన్ అవుతున్నట్టు అర్థం
+    print("🔱 ARKON: Direct Heartbeat to Railway Engine!")
+    return "OK", 200
 
 @app.route('/')
 def index():
-    # మెయిన్ పేజీ లోడ్ అయినప్పుడు కూడా హెల్త్ చెక్ ఇస్తుంది
-    print("🔱 ARKON: Creator access detected on root.")
     return render_template('index.html')
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    try:
-        data = request.get_json()
-        user_input = data.get("message", "")
-        response = arkon_app_core.process_command(user_input)
-        return jsonify({"response": response})
-    except Exception as e:
-        print(f"❌ ARKON CRITICAL ERROR: {str(e)}")
-        return jsonify({"response": f"ERROR: {str(e)}"})
+    data = request.get_json()
+    user_input = data.get("message", "")
+    response = arkon_app_core.process_command(user_input)
+    return jsonify({"response": response})
 
 if __name__ == "__main__":
-    # రైల్వే పోర్ట్ లాజిక్
-    port = int(os.environ.get("PORT", 8080))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    # 🚨 అత్యంత ముఖ్యం: రైల్వే ఇచ్చే డైనమిక్ పోర్ట్ ని పట్టుకోవడం
+    # లాగ్స్ లో ఈ పోర్ట్ ఏంటో ప్రింట్ చేస్తుంది
+    target_port = int(os.environ.get("PORT", 8080))
+    print(f"🚀 ARKON DEPLOYED ON PORT: {target_port}")
+    app.run(host='0.0.0.0', port=target_port, debug=False)
