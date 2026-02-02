@@ -3,52 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARKON SUPREME | NEURAL VAULT</title>
+    <title>ARKON SUPREME | DIAGNOSTIC MODE</title>
     <style>
         :root { --neon: #0ff; --bg: #000; }
         body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
         #portal { display: flex; height: 100vh; border: 4px solid var(--neon); box-sizing: border-box; }
         .sidebar { width: 300px; border-right: 2px solid var(--neon); background: #050505; padding: 25px; display: flex; flex-direction: column; }
         .main { flex-grow: 1; display: flex; flex-direction: column; position: relative; }
-        #chat-window { flex-grow: 1; overflow-y: auto; padding: 30px; background: rgba(0,0,0,0.85); scroll-behavior: smooth; }
+        #chat-window { flex-grow: 1; overflow-y: auto; padding: 30px; background: rgba(0,0,0,0.9); scroll-behavior: smooth; }
         .input-bar { display: flex; gap: 15px; padding: 25px; border-top: 1px solid #111; }
-        input { flex-grow: 1; background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 18px; outline: none; }
+        input { flex-grow: 1; background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 18px; outline: none; font-size: 16px; }
         .btn { background: #000; color: var(--neon); border: 1px solid var(--neon); padding: 10px 20px; cursor: pointer; font-weight: bold; }
         .btn:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
-        .arkon-msg { color: #0ff; margin-bottom: 25px; border-left: 5px solid #0ff; padding-left: 20px; }
+        .arkon-msg { color: #0ff; margin-bottom: 25px; border-left: 5px solid #0ff; padding-left: 20px; line-height: 1.5; }
         .user-msg { color: #0f0; margin-bottom: 25px; text-align: right; }
-        
-        /* 🔱 Vault Panel Styling */
-        #vault-panel { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #050505; border: 2px solid var(--neon); padding: 30px; z-index: 1000; box-shadow: 0 0 50px #0ff5; width: 350px; }
-        #vault-panel input { width: 100%; margin-bottom: 15px; display: block; box-sizing: border-box; }
-        #vault-panel h3 { margin-top: 0; text-align: center; color: #0ff; }
+        .error-msg { color: #ff4444; font-size: 12px; margin-bottom: 10px; border: 1px dashed #ff4444; padding: 5px; }
+        #vault-panel { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #050505; border: 2px solid var(--neon); padding: 30px; z-index: 1000; width: 350px; }
     </style>
 </head>
 <body>
 
 <div id="portal">
     <div class="sidebar">
-        <h2 style="text-shadow: 0 0 10px #0ff;">XARVEX COMMAND</h2>
+        <h3>XARVEX COMMAND</h3>
         <button class="btn" style="width:100%; margin-bottom:10px;" onclick="setM('Hacking')">🛡️ HACKING</button>
         <button class="btn" style="width:100%; margin-bottom:10px;" onclick="setM('English')">🗣️ ENGLISH</button>
-        <button class="btn" style="width:100%; margin-bottom:10px; color: orange; border-color: orange;" onclick="toggleVault()">🔑 OPEN VAULT</button>
-        <div style="font-size: 11px; color: lime; margin-top: auto; border: 1px solid #222; padding: 10px;">
-            📡 ENGINE: <span id="e-s">READY</span><br>
+        <button class="btn" style="width:100%; margin-bottom:10px; color: orange;" onclick="toggleVault()">🔑 OPEN VAULT</button>
+        <div style="font-size: 11px; color: lime; margin-top: auto;">
+            📡 STATUS: <span id="e-s">READY</span><br>
             🔐 VAULT: <span id="v-s">LOCKED</span>
         </div>
     </div>
     <div class="main">
         <div id="vault-panel">
-            <h3>GHOST KEY INJECTION</h3>
-            <input type="password" id="g-key" placeholder="Gemini API Key">
-            <input type="password" id="gr-key" placeholder="Groq API Key">
-            <input type="password" id="or-key" placeholder="OpenRouter API Key">
+            <h3 style="color: #0ff; text-align: center;">KEY INJECTION</h3>
+            <input type="password" id="g-key" placeholder="Gemini Key">
+            <input type="password" id="gr-key" placeholder="Groq Key">
+            <input type="password" id="or-key" placeholder="OpenRouter Key">
             <button class="btn" style="width: 100%;" onclick="saveKeys()">INJECT & RESTART</button>
             <button class="btn" style="width: 100%; margin-top: 10px; border-color: red; color: red;" onclick="toggleVault()">CLOSE</button>
         </div>
-
         <div id="chat-window">
-            <div class="arkon-msg">ARKON: సృష్టికర్త లీలా కృష్ణ గారు, 'OPEN VAULT' నొక్కి మీ కీలను ఇన్జెక్ట్ చేయండి. ఇప్పుడు ఎటువంటి అంతరాయం ఉండదు.</div>
+            <div class="arkon-msg">ARKON: సృష్టికర్త, డయాగ్నస్టిక్ మోడ్ సిద్ధం. కీలను ఇన్జెక్ట్ చేసి 'Execute' నొక్కండి.</div>
         </div>
         <div class="input-bar">
             <input type="text" id="u-i" placeholder="Command Arkon..." onkeypress="if(event.keyCode==13)exec()">
@@ -67,10 +63,9 @@
     }
 
     function saveKeys() {
-        const g = document.getElementById('g-key').value;
-        const gr = document.getElementById('gr-key').value;
-        const or = document.getElementById('or-key').value;
-        
+        const g = document.getElementById('g-key').value.trim();
+        const gr = document.getElementById('gr-key').value.trim();
+        const or = document.getElementById('or-key').value.trim();
         if (g && gr && or) {
             const data = [
                 { type: "GEMINI", key: g, url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent" },
@@ -78,10 +73,7 @@
                 { type: "OPENROUTER", key: or, url: "https://openrouter.ai/api/v1/chat/completions", model: "google/gemini-2.0-flash-exp:free" }
             ];
             localStorage.setItem('ARKON_VAULT', JSON.stringify(data));
-            alert("ARKON: కీలు సురక్షితంగా ఇన్జెక్ట్ అయ్యాయి!");
             location.reload();
-        } else {
-            alert("అన్ని కీలను తప్పనిసరిగా పూరించాలి!");
         }
     }
 
@@ -94,18 +86,31 @@
     }
 
     async function callAI(p) {
-        if (cIdx >= VAULT.length) { cIdx = 0; return "ARKON: నెట్‌వర్క్ నోడ్స్ రీసెట్ అవుతున్నాయి..."; }
+        if (cIdx >= VAULT.length) { cIdx = 0; return "ARKON: అన్ని ఇంజిన్లు విఫలమయ్యాయి. దయచేసి పైన ఉన్న Error Log చూడండి."; }
         const e = VAULT[cIdx];
-        document.getElementById('e-s').innerText = `USING ${e.type}...`;
+        document.getElementById('e-s').innerText = `TESTING ${e.type}...`;
         try {
             let r;
             if (e.type === "GEMINI") {
                 r = await fetch(`${e.url}?key=${e.key}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: p }] }] }) });
             } else {
-                r = await fetch(e.url, { method: "POST", headers: { "Authorization": `Bearer ${e.key}`, "Content-Type": "application/json" }, body: JSON.stringify({ model: e.model, messages: [{ role: "user", content: p }] }) });
+                r = await fetch(e.url, { 
+                    method: "POST", 
+                    headers: { 
+                        "Authorization": `Bearer ${e.key}`, 
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": window.location.origin, // OpenRouter Requirement [cite: 2026-02-02]
+                        "X-Title": "Arkon Supreme" 
+                    }, 
+                    body: JSON.stringify({ model: e.model, messages: [{ role: "user", content: p }] }) 
+                });
             }
             const d = await r.json();
-            if (!r.ok) throw new Error();
+            if (!r.ok) {
+                const errDetail = d.error ? d.error.message : "Unknown Error";
+                logError(`${e.type} FAILED: ${r.status} - ${errDetail}`);
+                throw new Error();
+            }
             return e.type === "GEMINI" ? d.candidates[0].content.parts[0].text : d.choices[0].message.content;
         } catch (err) { cIdx++; return callAI(p); }
     }
@@ -116,6 +121,13 @@
         d.className = s === 'arkon' ? 'arkon-msg' : 'user-msg';
         d.innerText = (s === 'arkon' ? 'ARKON: ' : 'YOU: ') + m;
         b.appendChild(d); b.scrollTop = b.scrollHeight;
+    }
+    function logError(m) {
+        const b = document.getElementById('chat-window');
+        const d = document.createElement('div');
+        d.className = 'error-msg';
+        d.innerText = `DEBUG: ${m}`;
+        b.appendChild(d);
     }
     document.getElementById('v-s').innerText = VAULT.length > 0 ? "UNLOCKED" : "EMPTY";
 </script>
