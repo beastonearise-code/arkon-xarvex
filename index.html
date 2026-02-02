@@ -3,21 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARKON SUPREME | GHOST VAULT</title>
+    <title>ARKON SUPREME | NEURAL VAULT</title>
     <style>
         :root { --neon: #0ff; --bg: #000; }
         body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
         #portal { display: flex; height: 100vh; border: 4px solid var(--neon); box-sizing: border-box; }
         .sidebar { width: 300px; border-right: 2px solid var(--neon); background: #050505; padding: 25px; display: flex; flex-direction: column; }
-        .main { flex-grow: 1; display: flex; flex-direction: column; }
+        .main { flex-grow: 1; display: flex; flex-direction: column; position: relative; }
         #chat-window { flex-grow: 1; overflow-y: auto; padding: 30px; background: rgba(0,0,0,0.85); scroll-behavior: smooth; }
         .input-bar { display: flex; gap: 15px; padding: 25px; border-top: 1px solid #111; }
-        input { flex-grow: 1; background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 18px; font-size: 18px; outline: none; }
-        .btn { background: #000; color: var(--neon); border: 1px solid var(--neon); padding: 10px 20px; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        input { flex-grow: 1; background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 18px; outline: none; }
+        .btn { background: #000; color: var(--neon); border: 1px solid var(--neon); padding: 10px 20px; cursor: pointer; font-weight: bold; }
         .btn:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
-        .arkon-msg { color: #0ff; margin-bottom: 25px; border-left: 5px solid #0ff; padding-left: 20px; font-size: 18px; }
-        .user-msg { color: #0f0; margin-bottom: 25px; text-align: right; font-style: italic; }
-        .status-box { font-size: 11px; color: lime; margin-top: auto; border: 1px solid #222; padding: 10px; }
+        .arkon-msg { color: #0ff; margin-bottom: 25px; border-left: 5px solid #0ff; padding-left: 20px; }
+        .user-msg { color: #0f0; margin-bottom: 25px; text-align: right; }
+        
+        /* 🔱 Vault Panel Styling */
+        #vault-panel { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #050505; border: 2px solid var(--neon); padding: 30px; z-index: 1000; box-shadow: 0 0 50px #0ff5; width: 350px; }
+        #vault-panel input { width: 100%; margin-bottom: 15px; display: block; box-sizing: border-box; }
+        #vault-panel h3 { margin-top: 0; text-align: center; color: #0ff; }
     </style>
 </head>
 <body>
@@ -25,23 +29,30 @@
 <div id="portal">
     <div class="sidebar">
         <h2 style="text-shadow: 0 0 10px #0ff;">XARVEX COMMAND</h2>
-        <button class="btn" style="width:100%; margin-bottom:15px;" onclick="setM('Hacking')">🛡️ HACKING</button>
-        <button class="btn" style="width:100%; margin-bottom:15px;" onclick="setM('English')">🗣️ ENGLISH</button>
-        <button class="btn" style="width:100%; margin-bottom:15px; color: orange; border-color: orange;" onclick="injectKeys()">🔑 UPDATE KEYS</button>
-        
-        <div class="status-box">
-            📡 ENGINE: <span id="e-status">READY</span><br>
-            🔐 VAULT: <span id="v-status">LOCKED</span><br>
-            🛠️ MODE: GHOST VAULT V1
+        <button class="btn" style="width:100%; margin-bottom:10px;" onclick="setM('Hacking')">🛡️ HACKING</button>
+        <button class="btn" style="width:100%; margin-bottom:10px;" onclick="setM('English')">🗣️ ENGLISH</button>
+        <button class="btn" style="width:100%; margin-bottom:10px; color: orange; border-color: orange;" onclick="toggleVault()">🔑 OPEN VAULT</button>
+        <div style="font-size: 11px; color: lime; margin-top: auto; border: 1px solid #222; padding: 10px;">
+            📡 ENGINE: <span id="e-s">READY</span><br>
+            🔐 VAULT: <span id="v-s">LOCKED</span>
         </div>
     </div>
     <div class="main">
+        <div id="vault-panel">
+            <h3>GHOST KEY INJECTION</h3>
+            <input type="password" id="g-key" placeholder="Gemini API Key">
+            <input type="password" id="gr-key" placeholder="Groq API Key">
+            <input type="password" id="or-key" placeholder="OpenRouter API Key">
+            <button class="btn" style="width: 100%;" onclick="saveKeys()">INJECT & RESTART</button>
+            <button class="btn" style="width: 100%; margin-top: 10px; border-color: red; color: red;" onclick="toggleVault()">CLOSE</button>
+        </div>
+
         <div id="chat-window">
-            <div class="arkon-msg">ARKON: సృష్టికర్త లీలా కృష్ణ గారు, నెట్‌వర్క్ భద్రత కోసం మీ కీలను 'UPDATE KEYS' బటన్ ద్వారా ఇక్కడ రహస్యంగా భద్రపరచండి. [cite: 2026-02-02]</div>
+            <div class="arkon-msg">ARKON: సృష్టికర్త లీలా కృష్ణ గారు, 'OPEN VAULT' నొక్కి మీ కీలను ఇన్జెక్ట్ చేయండి. ఇప్పుడు ఎటువంటి అంతరాయం ఉండదు.</div>
         </div>
         <div class="input-bar">
-            <input type="text" id="u-in" placeholder="Command Arkon..." onkeypress="if(event.keyCode==13)execute()">
-            <button class="btn" onclick="execute()">EXECUTE</button>
+            <input type="text" id="u-i" placeholder="Command Arkon..." onkeypress="if(event.keyCode==13)exec()">
+            <button class="btn" onclick="exec()">EXECUTE</button>
         </div>
     </div>
 </div>
@@ -49,12 +60,17 @@
 <script>
     let VAULT = JSON.parse(localStorage.getItem('ARKON_VAULT')) || [];
     let cIdx = 0;
-    let currentMission = "General Control";
 
-    function injectKeys() {
-        const g = prompt("Gemini Key ఇవ్వండి:");
-        const gr = prompt("Groq Key ఇవ్వండి:");
-        const or = prompt("OpenRouter Key ఇవ్వండి:");
+    function toggleVault() {
+        const p = document.getElementById('vault-panel');
+        p.style.display = p.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function saveKeys() {
+        const g = document.getElementById('g-key').value;
+        const gr = document.getElementById('gr-key').value;
+        const or = document.getElementById('or-key').value;
+        
         if (g && gr && or) {
             const data = [
                 { type: "GEMINI", key: g, url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent" },
@@ -62,49 +78,46 @@
                 { type: "OPENROUTER", key: or, url: "https://openrouter.ai/api/v1/chat/completions", model: "google/gemini-2.0-flash-exp:free" }
             ];
             localStorage.setItem('ARKON_VAULT', JSON.stringify(data));
-            alert("ARKON: కీలు సురక్షితంగా వాల్ట్‌లో భద్రపరచబడ్డాయి.");
+            alert("ARKON: కీలు సురక్షితంగా ఇన్జెక్ట్ అయ్యాయి!");
             location.reload();
+        } else {
+            alert("అన్ని కీలను తప్పనిసరిగా పూరించాలి!");
         }
     }
 
-    async function execute() {
-        const input = document.getElementById('u-in');
-        const cmd = input.value; if (!cmd) return;
-        if (VAULT.length === 0) { alert("ముందుగా UPDATE KEYS బటన్ నొక్కి కీలను ఇవ్వండి!"); return; }
-        addMsg(cmd, 'user'); input.value = '';
-        const res = await callAI(cmd);
-        addMsg(res, 'arkon');
+    async function exec() {
+        const i = document.getElementById('u-i');
+        const cmd = i.value; if (!cmd) return;
+        if (VAULT.length === 0) { toggleVault(); return; }
+        addM(cmd, 'user'); i.value = '';
+        const res = await callAI(cmd); addM(res, 'arkon');
     }
 
     async function callAI(p) {
-        if (cIdx >= VAULT.length) { cIdx = 0; return "ARKON: నెట్‌వర్క్ నోడ్స్ రీసెట్ అవుతున్నాయి. దయచేసి మీ కీలను ఒకసారి సరిచూసుకోండి."; }
-        const eng = VAULT[cIdx];
-        document.getElementById('e-status').innerText = `USING ${eng.type}...`;
+        if (cIdx >= VAULT.length) { cIdx = 0; return "ARKON: నెట్‌వర్క్ నోడ్స్ రీసెట్ అవుతున్నాయి..."; }
+        const e = VAULT[cIdx];
+        document.getElementById('e-s').innerText = `USING ${e.type}...`;
         try {
-            let res;
-            if (eng.type === "GEMINI") {
-                res = await fetch(`${eng.url}?key=${eng.key}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: p }] }] }) });
+            let r;
+            if (e.type === "GEMINI") {
+                r = await fetch(`${e.url}?key=${e.key}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: p }] }] }) });
             } else {
-                res = await fetch(eng.url, { method: "POST", headers: { "Authorization": `Bearer ${eng.key}`, "Content-Type": "application/json" }, body: JSON.stringify({ model: eng.model, messages: [{ role: "user", content: p }] }) });
+                r = await fetch(e.url, { method: "POST", headers: { "Authorization": `Bearer ${e.key}`, "Content-Type": "application/json" }, body: JSON.stringify({ model: e.model, messages: [{ role: "user", content: p }] }) });
             }
-            const data = await res.json();
-            if (!res.ok) throw new Error();
-            return eng.type === "GEMINI" ? data.candidates[0].content.parts[0].text : data.choices[0].message.content;
-        } catch (e) {
-            cIdx++;
-            return callAI(p);
-        }
+            const d = await r.json();
+            if (!r.ok) throw new Error();
+            return e.type === "GEMINI" ? d.candidates[0].content.parts[0].text : d.choices[0].message.content;
+        } catch (err) { cIdx++; return callAI(p); }
     }
 
-    function addMsg(m, s) {
-        const box = document.getElementById('chat-window');
+    function addM(m, s) {
+        const b = document.getElementById('chat-window');
         const d = document.createElement('div');
         d.className = s === 'arkon' ? 'arkon-msg' : 'user-msg';
         d.innerText = (s === 'arkon' ? 'ARKON: ' : 'YOU: ') + m;
-        box.appendChild(d); box.scrollTop = box.scrollHeight;
+        b.appendChild(d); b.scrollTop = b.scrollHeight;
     }
-    function setM(m) { mission = m; addMsg(`Mission ${m} Active.`, 'arkon'); }
-    document.getElementById('v-status').innerText = VAULT.length > 0 ? "UNLOCKED" : "LOCKED";
+    document.getElementById('v-s').innerText = VAULT.length > 0 ? "UNLOCKED" : "EMPTY";
 </script>
 </body>
 </html>
