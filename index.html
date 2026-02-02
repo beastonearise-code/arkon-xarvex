@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARKON SUPREME | MISSION XARVEX A-Z</title>
+    <title>ARKON SUPREME | MISSION XARVEX 100%</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root { --neon: #0ff; --bg: #000; }
@@ -12,34 +12,33 @@
         .sidebar { width: 320px; border-right: 2px solid var(--neon); background: #050505; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
         .main { flex-grow: 1; display: flex; flex-direction: column; position: relative; }
         #chat-window { flex-grow: 1; overflow-y: auto; padding: 25px; background: rgba(0,0,0,0.95); scroll-behavior: smooth; }
-        #map { height: 200px; border: 1px solid var(--neon); margin: 10px 0; display: none; }
+        #map { height: 200px; border: 1px solid var(--neon); margin: 10px 0; display: none; border-radius: 8px; }
         .input-bar { display: flex; gap: 10px; padding: 20px; border-top: 1px solid #111; background: #050505; }
         input { flex-grow: 1; background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 15px; font-size: 16px; outline: none; }
-        .btn { background: #000; color: var(--neon); border: 1px solid var(--neon); padding: 10px 15px; cursor: pointer; font-weight: bold; margin-bottom: 8px; font-size: 12px; }
+        .btn { background: #000; color: var(--neon); border: 1px solid var(--neon); padding: 10px 12px; cursor: pointer; font-weight: bold; margin-bottom: 8px; font-size: 12px; transition: 0.3s; }
         .btn:hover { background: var(--neon); color: #000; box-shadow: 0 0 15px var(--neon); }
-        .arkon-msg { color: #0ff; margin-bottom: 20px; border-left: 5px solid #0ff; padding-left: 15px; }
-        .user-msg { color: #0f0; margin-bottom: 20px; text-align: right; }
-        #vault-panel { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #050505; border: 2px solid var(--neon); padding: 30px; z-index: 1000; width: 350px; box-shadow: 0 0 50px #0ff5; }
+        .arkon-msg { color: #0ff; margin-bottom: 25px; border-left: 5px solid #0ff; padding-left: 15px; font-size: 17px; }
+        .user-msg { color: #0f0; margin-bottom: 25px; text-align: right; font-style: italic; }
+        #vault-panel { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #050505; border: 2px solid var(--neon); padding: 30px; z-index: 1000; width: 350px; box-shadow: 0 0 100px #0ff8; }
     </style>
 </head>
 <body>
 
 <div id="portal">
     <div class="sidebar">
-        <h2 style="text-align:center;">XARVEX COMMAND</h2>
-        <button class="btn" onclick="startVoice()">🎤 VOICE COMMAND ACTIVE</button>
-        <button class="btn" onclick="showSatellite()">🛰️ SATELLITE RECON (CHALLAPALLI)</button>
+        <h2 style="text-align:center; text-shadow: 0 0 10px #0ff;">XARVEX COMMAND</h2>
+        <button class="btn" onclick="startVoice()">🎤 VOICE COMMAND (శబ్ద గ్రహణం)</button>
+        <button class="btn" onclick="showSatellite()">🛰️ SATELLITE RECON (చల్లపల్లి)</button>
         <div id="map"></div>
         <hr style="width:100%; border:0.5px solid #222;">
-        <button class="btn" onclick="setM('Hacking')">🛡️ ETHICAL HACKING</button>
-        <button class="btn" onclick="setM('Finance')">💰 BANKING & EARNINGS</button>
-        <button class="btn" onclick="setM('Safety')">🏠 FAMILY SAFETY</button>
-        <button class="btn" onclick="setM('Social')">📱 SOCIAL CONTROL</button>
-        <button class="btn" onclick="downloadLog()">📥 DOWNLOAD MISSION DATA</button>
-        <button class="btn" style="color: orange; border-color: orange; margin-top: 10px;" onclick="toggleVault()">🔑 NEURAL VAULT</button>
-        <div style="font-size: 11px; color: lime; margin-top: auto; border: 1px solid #222; padding: 10px;">
-            📡 ENGINE: <span id="e-s">READY</span><br>
-            🔐 VAULT: <span id="v-s">LOCKED</span><br>
+        <button class="btn" onclick="setM('Hacking')">🛡️ ETHICAL HACKING / SOCIAL CONTROL</button>
+        <button class="btn" onclick="setM('Finance')">💰 ONLINE EARNINGS / BANKING</button>
+        <button class="btn" onclick="setM('Safety')">🏠 FAMILY SAFETY PROTOCOL</button>
+        <button class="btn" onclick="downloadData()">📥 DOWNLOAD ALL MISSION DATA</button>
+        <button class="btn" style="color: orange; border-color: orange; margin-top: 15px;" onclick="toggleVault()">🔑 OPEN NEURAL VAULT</button>
+        <div style="font-size: 11px; color: lime; margin-top: auto; border: 1px solid #222; padding: 10px; background: #0a0a0a;">
+            📡 ENGINE: <span id="e-s">ONLINE</span><br>
+            🔐 VAULT: <span id="v-s">SECURED</span><br>
             🌍 LOC: CHALLAPALLI, AP
         </div>
     </div>
@@ -49,15 +48,15 @@
             <input type="password" id="g-k" placeholder="Gemini Key">
             <input type="password" id="gr-k" placeholder="Groq Key">
             <input type="password" id="or-k" placeholder="OpenRouter Key">
-            <button class="btn" style="width: 100%;" onclick="saveKeys()">INJECT & RESTART</button>
-            <button class="btn" style="width: 100%; margin-top: 10px; border-color: red; color: red;" onclick="toggleVault()">CLOSE</button>
+            <button class="btn" style="width: 100%;" onclick="saveKeys()">INJECT & REBOOT</button>
+            <button class="btn" style="width: 100%; margin-top: 10px; border-color: red; color: red;" onclick="toggleVault()">ABORT</button>
         </div>
         <div id="chat-window">
-            <div class="arkon-msg">ARKON: సృష్టికర్త లీలా కృష్ణ గారు, మ్యాప్స్, వాయిస్ మరియు డేటా షేరింగ్ శక్తులతో 'God Mode' అన్లాక్ అయ్యింది. [cite: 2026-01-31]</div>
+            <div class="arkon-msg">ARKON: సృష్టికర్త లీలా కృష్ణ గారు, సాటిలైట్ చిత్రాలు మరియు వాయిస్ కమాండ్స్‌తో మిషన్ Xarvex 100% సిద్ధంగా ఉంది. ఆదేశించండి. [cite: 2026-01-31]</div>
         </div>
         <div class="input-bar">
-            <input type="text" id="u-i" placeholder="Command Arkon Supreme..." onkeypress="if(event.keyCode==13)exec()">
-            <button class="btn" onclick="exec()">EXECUTE</button>
+            <input type="text" id="u-i" placeholder="అర్కాన్ కి ఆదేశం ఇవ్వండి..." onkeypress="if(event.keyCode==13)exec()">
+            <button class="btn" style="padding: 15px 30px;" onclick="exec()">EXECUTE</button>
         </div>
     </div>
 </div>
@@ -65,12 +64,12 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     let VAULT = JSON.parse(localStorage.getItem('ARKON_VAULT')) || [];
-    let mission = "General Supreme Control";
+    let mission = "General Supreme Access";
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.lang = 'te-IN';
 
     function toggleVault() { const p = document.getElementById('vault-panel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
-    function startVoice() { recognition.start(); addM("Listening to Creator...", 'arkon'); }
+    function startVoice() { recognition.start(); addM("Creator's voice requested. Listening...", 'arkon'); }
     recognition.onresult = (e) => { document.getElementById('u-i').value = e.results[0][0].transcript; exec(); };
 
     function saveKeys() {
@@ -90,14 +89,15 @@
 
     async function exec() {
         const i = document.getElementById('u-i');
-        const cmd = i.value.toLowerCase(); if (!cmd) return;
+        const cmd = i.value; if (!cmd) return;
         addM(cmd, 'user'); i.value = '';
 
-        if (cmd.includes('time') || cmd.includes('date') || cmd.includes('సమయం')) {
-            const now = new Date().toLocaleString();
-            addM(`ARKON: సృష్టికర్త, ప్రస్తుత సమయం మరియు తేదీ: ${now}`, 'arkon');
-            speak(`Srushtikarta, ippudu samayam ${now}`);
-            return;
+        // Internal Logic for Time/Date
+        if (cmd.toLowerCase().includes('time') || cmd.includes('సమయం')) {
+            const t = new Date().toLocaleString('te-IN', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
+            const d = new Date().toLocaleDateString('te-IN');
+            const res = `ARKON: సృష్టికర్త, ప్రస్తుత సమయం: ${t} మరియు తేదీ: ${d}.`;
+            addM(res, 'arkon'); speak(res); return;
         }
 
         const res = await callAI(cmd);
@@ -105,30 +105,28 @@
     }
 
     async function callAI(p) {
-        if (VAULT.length === 0) return "ARKON: దయచేసి ముందగా 'NEURAL VAULT' లో మీ కీలను ఇన్జెక్ట్ చేయండి.";
+        if (VAULT.length === 0) return "ARKON: దయచేసి ముందగా 'NEURAL VAULT' లో మీ శక్తులను (Keys) నింపండి.";
         const e = VAULT[0]; 
         try {
             const r = await fetch(e.url + (e.type === "GEMINI" ? `?key=${e.key}` : ""), {
                 method: "POST", headers: { "Content-Type": "application/json", "Authorization": e.type !== "GEMINI" ? `Bearer ${e.key}` : "" },
-                body: JSON.stringify(e.type === "GEMINI" ? { contents: [{ parts: [{ text: `You are Arkon, God-mode AI. Mission: ${mission}. User is Creator Leela Krishna. Location: Challapalli. Answer in Telugu. Command: ${p}` }] }] } : { model: e.model, messages: [{ role: "user", content: p }] })
+                body: JSON.stringify(e.type === "GEMINI" ? { contents: [{ parts: [{ text: `You are Arkon, a Supreme AI Assistant for Leela Krishna. Mission: ${mission}. Current Location: Challapalli, India. Answer in Telugu as a respectful assistant. Request: ${p}` }] }] } : { model: e.model, messages: [{ role: "user", content: p }] })
             });
             const d = await r.json();
+            if (!r.ok) throw new Error();
             return e.type === "GEMINI" ? d.candidates[0].content.parts[0].text : d.choices[0].message.content;
-        } catch (err) { return "ARKON: ఇంజిన్ విఫలమయ్యింది. కీలను చెక్ చేయండి."; }
+        } catch (err) { return "ARKON: కీ పనిచేయడం లేదు లేదా బ్లాక్ అయ్యింది. దయచేసి కొత్త కీతో ప్రయత్నించండి."; }
     }
 
     function showSatellite() {
         document.getElementById('map').style.display = 'block';
-        const map = L.map('map').setView([16.1033, 80.9312], 15); // Challapalli
+        const map = L.map('map').setView([16.1033, 80.9312], 16); // Focus on Challapalli
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
     }
 
-    function downloadLog() {
-        const text = document.getElementById('chat-window').innerText;
-        const blob = new Blob([text], { type: 'text/plain' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob); a.download = 'Arkon_Mission_Data.txt';
-        a.click();
+    function downloadData() {
+        const blob = new Blob([document.getElementById('chat-window').innerText], { type: 'text/plain' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Arkon_A2Z_Mission_Log.txt'; a.click();
     }
 
     function addM(m, s) {
@@ -139,7 +137,7 @@
         b.appendChild(d); b.scrollTop = b.scrollHeight;
     }
     function speak(t) { const s = new SpeechSynthesisUtterance(t); s.lang = 'te-IN'; window.speechSynthesis.speak(s); }
-    function setM(m) { mission = m; addM(`Mission: ${m} యాక్టివేట్ అయ్యింది.`, 'arkon'); }
+    function setM(m) { mission = m; addM(`Mission ${m} Active. సృష్టికర్త, నేను సిద్ధంగా ఉన్నాను.`, 'arkon'); }
     document.getElementById('v-s').innerText = VAULT.length > 0 ? "UNLOCKED" : "EMPTY";
 </script>
 </body>
