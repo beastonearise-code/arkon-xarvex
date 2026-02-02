@@ -3,70 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARKON SUPREME | FIXED MODELS</title>
+    <title>ARKON SUPREME | MISSION XARVEX A-Z</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root { --neon: #0ff; --bg: #000; }
         body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
         #portal { display: flex; height: 100vh; border: 4px solid var(--neon); box-sizing: border-box; }
-        .sidebar { width: 300px; border-right: 2px solid var(--neon); background: #050505; padding: 25px; display: flex; flex-direction: column; }
+        .sidebar { width: 320px; border-right: 2px solid var(--neon); background: #050505; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
         .main { flex-grow: 1; display: flex; flex-direction: column; position: relative; }
-        #chat-window { flex-grow: 1; overflow-y: auto; padding: 30px; background: rgba(0,0,0,0.9); scroll-behavior: smooth; }
-        .input-bar { display: flex; gap: 15px; padding: 25px; border-top: 1px solid #111; }
-        input { flex-grow: 1; background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 18px; outline: none; font-size: 16px; }
-        .btn { background: #000; color: var(--neon); border: 1px solid var(--neon); padding: 10px 20px; cursor: pointer; font-weight: bold; }
-        .btn:hover { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
-        .arkon-msg { color: #0ff; margin-bottom: 25px; border-left: 5px solid #0ff; padding-left: 20px; line-height: 1.5; }
-        .user-msg { color: #0f0; margin-bottom: 25px; text-align: right; }
-        .debug-msg { color: #ff4444; font-size: 11px; margin-bottom: 10px; border: 1px dashed #ff4444; padding: 5px; }
-        #vault-panel { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #050505; border: 2px solid var(--neon); padding: 30px; z-index: 1000; width: 350px; }
+        #chat-window { flex-grow: 1; overflow-y: auto; padding: 25px; background: rgba(0,0,0,0.95); scroll-behavior: smooth; }
+        #map { height: 200px; border: 1px solid var(--neon); margin: 10px 0; display: none; }
+        .input-bar { display: flex; gap: 10px; padding: 20px; border-top: 1px solid #111; background: #050505; }
+        input { flex-grow: 1; background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 15px; font-size: 16px; outline: none; }
+        .btn { background: #000; color: var(--neon); border: 1px solid var(--neon); padding: 10px 15px; cursor: pointer; font-weight: bold; margin-bottom: 8px; font-size: 12px; }
+        .btn:hover { background: var(--neon); color: #000; box-shadow: 0 0 15px var(--neon); }
+        .arkon-msg { color: #0ff; margin-bottom: 20px; border-left: 5px solid #0ff; padding-left: 15px; }
+        .user-msg { color: #0f0; margin-bottom: 20px; text-align: right; }
+        #vault-panel { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #050505; border: 2px solid var(--neon); padding: 30px; z-index: 1000; width: 350px; box-shadow: 0 0 50px #0ff5; }
     </style>
 </head>
 <body>
 
 <div id="portal">
     <div class="sidebar">
-        <h3>XARVEX COMMAND</h3>
-        <button class="btn" style="width:100%; margin-bottom:10px;" onclick="setM('Hacking')">🛡️ HACKING</button>
-        <button class="btn" style="width:100%; margin-bottom:10px;" onclick="setM('English')">🗣️ ENGLISH</button>
-        <button class="btn" style="width:100%; margin-bottom:10px; color: orange;" onclick="toggleVault()">🔑 OPEN VAULT</button>
-        <div style="font-size: 11px; color: lime; margin-top: auto;">
+        <h2 style="text-align:center;">XARVEX COMMAND</h2>
+        <button class="btn" onclick="startVoice()">🎤 VOICE COMMAND ACTIVE</button>
+        <button class="btn" onclick="showSatellite()">🛰️ SATELLITE RECON (CHALLAPALLI)</button>
+        <div id="map"></div>
+        <hr style="width:100%; border:0.5px solid #222;">
+        <button class="btn" onclick="setM('Hacking')">🛡️ ETHICAL HACKING</button>
+        <button class="btn" onclick="setM('Finance')">💰 BANKING & EARNINGS</button>
+        <button class="btn" onclick="setM('Safety')">🏠 FAMILY SAFETY</button>
+        <button class="btn" onclick="setM('Social')">📱 SOCIAL CONTROL</button>
+        <button class="btn" onclick="downloadLog()">📥 DOWNLOAD MISSION DATA</button>
+        <button class="btn" style="color: orange; border-color: orange; margin-top: 10px;" onclick="toggleVault()">🔑 NEURAL VAULT</button>
+        <div style="font-size: 11px; color: lime; margin-top: auto; border: 1px solid #222; padding: 10px;">
             📡 ENGINE: <span id="e-s">READY</span><br>
-            🔐 VAULT: <span id="v-s">LOCKED</span>
+            🔐 VAULT: <span id="v-s">LOCKED</span><br>
+            🌍 LOC: CHALLAPALLI, AP
         </div>
     </div>
     <div class="main">
         <div id="vault-panel">
-            <h3 style="color: #0ff; text-align: center;">KEY INJECTION</h3>
-            <input type="password" id="g-key" placeholder="Gemini API Key">
-            <input type="password" id="gr-key" placeholder="Groq API Key">
-            <input type="password" id="or-key" placeholder="OpenRouter API Key">
+            <h3 style="color: #0ff; text-align: center;">GHOST KEY INJECTION</h3>
+            <input type="password" id="g-k" placeholder="Gemini Key">
+            <input type="password" id="gr-k" placeholder="Groq Key">
+            <input type="password" id="or-k" placeholder="OpenRouter Key">
             <button class="btn" style="width: 100%;" onclick="saveKeys()">INJECT & RESTART</button>
             <button class="btn" style="width: 100%; margin-top: 10px; border-color: red; color: red;" onclick="toggleVault()">CLOSE</button>
         </div>
         <div id="chat-window">
-            <div class="arkon-msg">ARKON: సృష్టికర్త, మోడల్స్ రిపేర్ చేయబడ్డాయి. 'OPEN VAULT' నొక్కి మీ కీలను ఇవ్వండి. [cite: 2026-02-02]</div>
+            <div class="arkon-msg">ARKON: సృష్టికర్త లీలా కృష్ణ గారు, మ్యాప్స్, వాయిస్ మరియు డేటా షేరింగ్ శక్తులతో 'God Mode' అన్లాక్ అయ్యింది. [cite: 2026-01-31]</div>
         </div>
         <div class="input-bar">
-            <input type="text" id="u-i" placeholder="Command Arkon..." onkeypress="if(event.keyCode==13)exec()">
+            <input type="text" id="u-i" placeholder="Command Arkon Supreme..." onkeypress="if(event.keyCode==13)exec()">
             <button class="btn" onclick="exec()">EXECUTE</button>
         </div>
     </div>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     let VAULT = JSON.parse(localStorage.getItem('ARKON_VAULT')) || [];
-    let cIdx = 0;
-    let mission = "General";
+    let mission = "General Supreme Control";
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'te-IN';
 
-    function toggleVault() {
-        const p = document.getElementById('vault-panel');
-        p.style.display = p.style.display === 'block' ? 'none' : 'block';
-    }
+    function toggleVault() { const p = document.getElementById('vault-panel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
+    function startVoice() { recognition.start(); addM("Listening to Creator...", 'arkon'); }
+    recognition.onresult = (e) => { document.getElementById('u-i').value = e.results[0][0].transcript; exec(); };
 
     function saveKeys() {
-        const g = document.getElementById('g-key').value.trim();
-        const gr = document.getElementById('gr-key').value.trim();
-        const or = document.getElementById('or-key').value.trim();
+        const g = document.getElementById('g-k').value.trim();
+        const gr = document.getElementById('gr-k').value.trim();
+        const or = document.getElementById('or-k').value.trim();
         if (g && gr && or) {
             const data = [
                 { type: "GEMINI", key: g, url: "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent" },
@@ -80,34 +90,45 @@
 
     async function exec() {
         const i = document.getElementById('u-i');
-        const cmd = i.value; if (!cmd) return;
-        if (VAULT.length === 0) { toggleVault(); return; }
+        const cmd = i.value.toLowerCase(); if (!cmd) return;
         addM(cmd, 'user'); i.value = '';
-        const res = await callAI(cmd); addM(res, 'arkon');
+
+        if (cmd.includes('time') || cmd.includes('date') || cmd.includes('సమయం')) {
+            const now = new Date().toLocaleString();
+            addM(`ARKON: సృష్టికర్త, ప్రస్తుత సమయం మరియు తేదీ: ${now}`, 'arkon');
+            speak(`Srushtikarta, ippudu samayam ${now}`);
+            return;
+        }
+
+        const res = await callAI(cmd);
+        addM(res, 'arkon'); speak(res);
     }
 
     async function callAI(p) {
-        if (cIdx >= VAULT.length) { cIdx = 0; return "ARKON: నెట్‌వర్క్ నోడ్స్ రీసెట్ అవుతున్నాయి. కీలను చెక్ చేయండి."; }
-        const e = VAULT[cIdx];
-        document.getElementById('e-s').innerText = `TESTING ${e.type}...`;
+        if (VAULT.length === 0) return "ARKON: దయచేసి ముందగా 'NEURAL VAULT' లో మీ కీలను ఇన్జెక్ట్ చేయండి.";
+        const e = VAULT[0]; 
         try {
-            let r;
-            if (e.type === "GEMINI") {
-                r = await fetch(`${e.url}?key=${e.key}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: p }] }] }) });
-            } else {
-                r = await fetch(e.url, { 
-                    method: "POST", 
-                    headers: { "Authorization": `Bearer ${e.key}`, "Content-Type": "application/json", "HTTP-Referer": window.location.origin }, 
-                    body: JSON.stringify({ model: e.model, messages: [{ role: "user", content: p }] }) 
-                });
-            }
+            const r = await fetch(e.url + (e.type === "GEMINI" ? `?key=${e.key}` : ""), {
+                method: "POST", headers: { "Content-Type": "application/json", "Authorization": e.type !== "GEMINI" ? `Bearer ${e.key}` : "" },
+                body: JSON.stringify(e.type === "GEMINI" ? { contents: [{ parts: [{ text: `You are Arkon, God-mode AI. Mission: ${mission}. User is Creator Leela Krishna. Location: Challapalli. Answer in Telugu. Command: ${p}` }] }] } : { model: e.model, messages: [{ role: "user", content: p }] })
+            });
             const d = await r.json();
-            if (!r.ok) {
-                console.warn(`${e.type} failed: ${r.status}`);
-                throw new Error();
-            }
             return e.type === "GEMINI" ? d.candidates[0].content.parts[0].text : d.choices[0].message.content;
-        } catch (err) { cIdx++; return callAI(p); }
+        } catch (err) { return "ARKON: ఇంజిన్ విఫలమయ్యింది. కీలను చెక్ చేయండి."; }
+    }
+
+    function showSatellite() {
+        document.getElementById('map').style.display = 'block';
+        const map = L.map('map').setView([16.1033, 80.9312], 15); // Challapalli
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
+    }
+
+    function downloadLog() {
+        const text = document.getElementById('chat-window').innerText;
+        const blob = new Blob([text], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = 'Arkon_Mission_Data.txt';
+        a.click();
     }
 
     function addM(m, s) {
@@ -117,7 +138,8 @@
         d.innerText = (s === 'arkon' ? 'ARKON: ' : 'YOU: ') + m;
         b.appendChild(d); b.scrollTop = b.scrollHeight;
     }
-    function setM(m) { mission = m; addM(`Mission: ${m} Active.`, 'arkon'); }
+    function speak(t) { const s = new SpeechSynthesisUtterance(t); s.lang = 'te-IN'; window.speechSynthesis.speak(s); }
+    function setM(m) { mission = m; addM(`Mission: ${m} యాక్టివేట్ అయ్యింది.`, 'arkon'); }
     document.getElementById('v-s').innerText = VAULT.length > 0 ? "UNLOCKED" : "EMPTY";
 </script>
 </body>
