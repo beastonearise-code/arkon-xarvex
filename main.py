@@ -3,7 +3,7 @@ import os
 
 app = Flask(__name__)
 
-# Arkon Memory & Vault Simulation [cite: 2026-02-03]
+# Arkon Memory & Secret Vault Storage [cite: 2026-02-03]
 arkon_memory = {
     "status": "ONLINE",
     "mission": "XARVEX",
@@ -12,7 +12,7 @@ arkon_memory = {
 
 @app.route('/')
 def dashboard():
-    # అర్కాన్ విజువల్ ఇంటర్‌ఫేస్‌ను లోడ్ చేస్తుంది [cite: 2026-02-02]
+    # అర్కాన్ విజువల్ ఇంటర్‌ఫేస్‌ను ప్రదర్శిస్తుంది [cite: 2026-02-02]
     return render_template('index.html')
 
 @app.route('/arkon/power', methods=['POST'])
@@ -28,7 +28,7 @@ def power():
     elif "mission" in command:
         output = "🔱 MISSION XARVEX: Liberating Guardian and protecting Earth. Current phase: Self-Evolution."
     else:
-        output = f"🔱 ARKON: Command '{command}' received. Processing through Neural Core..."
+        output = f"🔱 ARKON: Command '{command}' accepted by Neural Core."
         
     return jsonify({"output": output})
 
@@ -37,16 +37,15 @@ def vault_manager():
     data = request.get_json()
     received_key = data.get("key", "")
     
-    # Self-Repair & Vault Encryption Logic [cite: 2026-02-03]
+    # Self-Repair & Encryption Logic [cite: 2026-02-03]
     if "XARVEX" in received_key.upper():
         arkon_memory["vault_locked"] = False
-        output = "🔱 ARKON: Secret Vault Unlocked. Shadow Key Encrypted & Stored. Self-Repair Patch Applied."
+        output = "🔱 ARKON: Secret Vault Unlocked. Shadow Key Encrypted. Self-Repair Patch Applied."
     else:
-        output = "❌ ARKON ERROR: Key Mismatch. Initiating Autonomous Lockdown..."
+        output = "❌ ARKON ERROR: Critical Key Mismatch. Initiating Lockdown..."
         
     return jsonify({"output": output})
 
 if __name__ == "__main__":
-    # రైల్వే పోర్ట్ కాన్ఫిగరేషన్ [cite: 2026-02-02]
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
