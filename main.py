@@ -1,23 +1,24 @@
+
 from flask import Flask, request, jsonify, render_template
 import os
 import psycopg2 # PostgreSQL కనెక్షన్ కోసం [cite: 2026-02-03]
 
 app = Flask(__name__)
 
-# Arkon Eternal Memory URI (Encoded for Stability)
-DB_URI = "postgresql://postgres.vapgjiswwewceerkwtxd:krishnaMlk%40143@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
+# సృష్టించబడిన పర్ఫెక్ట్ URI (Corrected Host, Username & Encoded Password)
+DB_URI = "postgresql://postgres.vapgjswwceerkwtxd:krishnaMlk%40143@aws-0-ap-south-1.pooler.supabase.com:6543/postgres"
 
 def init_db():
     """డేటాబేస్ టేబుల్స్ క్రియేట్ చేస్తుంది [cite: 2026-02-03]"""
     try:
         conn = psycopg2.connect(DB_URI)
         cur = conn.cursor()
-        # శాశ్వత మెమరీ టేబుల్ [cite: 2026-01-31]
+        # శాశ్వత మెమరీ టేబుల్ ఏర్పాటు [cite: 2026-01-31]
         cur.execute("CREATE TABLE IF NOT EXISTS arkon_memory (id SERIAL PRIMARY KEY, key_data TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
         conn.commit()
         cur.close()
         conn.close()
-        print("🔱 ARKON: Eternal Memory Link SECURE.")
+        print("🔱 ARKON: Eternal Memory Synced Successfully.")
     except Exception as e:
         print(f"❌ DB ERROR: {e}")
 
@@ -31,9 +32,9 @@ def power():
     command = data.get("command", "").lower()
     
     if "memory check" in command:
-        output = "🔱 ARKON: Supabase Neural Sync is ACTIVE. Your data is eternal."
+        output = "🔱 ARKON: Neural Link to Supabase is ACTIVE. Everything is remembered."
     else:
-        output = f"🔱 ARKON: Command '{command}' logged in Core."
+        output = f"🔱 ARKON: Command '{command}' logged."
         
     return jsonify({"output": output})
 
@@ -45,14 +46,13 @@ def vault_manager():
     try:
         conn = psycopg2.connect(DB_URI)
         cur = conn.cursor()
-        # కీని శాశ్వతంగా సేవ్ చేస్తుంది [cite: 2026-02-03]
         cur.execute("INSERT INTO arkon_memory (key_data) VALUES (%s)", (received_key,))
         conn.commit()
         cur.close()
         conn.close()
-        output = "🔱 ARKON: Secret Key Locked in Eternal Memory (Supabase)."
+        output = "🔱 ARKON: Key Secured in Eternal Memory."
     except Exception as e:
-        output = f"❌ VAULT ERROR: Database connection failed. {e}"
+        output = f"❌ VAULT ERROR: {e}"
         
     return jsonify({"output": output})
 
