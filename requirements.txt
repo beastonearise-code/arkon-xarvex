@@ -1,5 +1,2 @@
-Flask
-gunicorn
-google-generativeai
-openai
-requests
+flask
+psycopg2-binary
