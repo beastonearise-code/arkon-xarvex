@@ -6,7 +6,7 @@ from pymongo import MongoClient
 
 app = Flask(__name__)
 
-# రైల్వే వేరియబుల్స్ నుండి రహస్య సమాచారాన్ని సేకరిస్తుంది [cite: 2026-02-03]
+# రైల్వే వేరియబుల్స్ నుండి సమాచారాన్ని సేకరిస్తుంది [cite: 2026-02-03]
 SQL_URI = os.getenv("SQL_URI")
 MONGO_URI = os.getenv("MONGO_URI")
 CREATOR_PIN = os.getenv("ARKON_PIN")
@@ -18,10 +18,8 @@ db_intel = mongo_client["Arkon-Xarvex-Core"]
 def init_cores():
     """డ్యూయల్-కోర్ సింకింగ్ ప్రొటోకాల్ [cite: 2026-01-31, 2026-02-03]"""
     try:
-        # SQL Test
         conn = psycopg2.connect(SQL_URI, connect_timeout=5)
         conn.close()
-        # MongoDB Test
         db_intel.system_status.update_one({"core": "dual"}, {"$set": {"status": "ACTIVE"}}, upsert=True)
         print("🔱 ARKON: Security Shield Engaged. Cores Active.", flush=True)
     except Exception as e:
