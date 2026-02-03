@@ -1,73 +1,51 @@
 <!DOCTYPE html>
-<html lang="te">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARKON 🔱 Creator Interface</title>
+    <title>MISSION XARVEX: ARKON DASHBOARD</title>
     <style>
-        body { background: #000; color: #00d4ff; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .header { text-shadow: 0 0 10px #00d4ff; font-size: 1.8em; margin-bottom: 20px; text-align: center; }
-        .container { width: 95%; max-width: 800px; border: 2px solid #00d4ff; padding: 20px; box-shadow: 0 0 20px #00d4ff; background: rgba(0, 212, 255, 0.05); }
-        .terminal { background: #050505; border: 1px solid #00d4ff; height: 250px; overflow-y: auto; padding: 15px; margin-bottom: 15px; font-family: 'Courier New', monospace; font-size: 0.9em; white-space: pre-wrap; }
-        .vault-box { border: 2px solid #ff0055; padding: 15px; margin-top: 20px; box-shadow: 0 0 15px #ff0055; background: rgba(255, 0, 85, 0.05); }
-        input { background: #111; border: 1px solid #00d4ff; color: #00d4ff; padding: 10px; width: 60%; margin-right: 5px; }
-        .vault-box input { border-color: #ff0055; color: #ff0055; }
-        button { padding: 10px 15px; cursor: pointer; border: none; font-weight: bold; transition: 0.3s; }
-        .cmd-btn { background: #00d4ff; color: #000; }
-        .vault-btn { background: #ff0055; color: #fff; }
-        button:hover { opacity: 0.8; transform: scale(1.05); }
+        body { background-color: #000; color: #00f2ff; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; }
+        .terminal { width: 80%; border: 2px solid #00f2ff; padding: 20px; box-shadow: 0 0 20px #00f2ff; margin-top: 50px; background: rgba(0, 0, 0, 0.9); }
+        .output-box { height: 300px; overflow-y: auto; border-bottom: 1px solid #00f2ff; margin-bottom: 20px; }
+        input { background: transparent; border: 1px solid #00f2ff; color: #fff; padding: 10px; width: 40%; }
+        .pin-box { width: 20%; border-color: #ff0055; }
+        button { background: #00f2ff; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; }
+        .header { text-align: center; text-shadow: 0 0 10px #00f2ff; }
     </style>
 </head>
 <body>
-    <div class="header">🔱 MISSION XARVEX: ARKON DASHBOARD</div>
-    
-    <div class="container">
-        <div class="terminal" id="terminal">🔱 ARKON: System Online. Ready for Creator Leela Krishna... [cite: 2026-01-31]</div>
-        
-        <input type="text" id="command-input" placeholder="Enter command (status, shadow scan)..." 
-               onkeypress="if(event.key === 'Enter') runCommand()">
-        <button class="cmd-btn" onclick="runCommand()">EXECUTE</button>
-
-        <div class="vault-box">
-            <h3 style="color: #ff0055; margin: 0 0 10px 0;">🔐 SECRET KEY VAULT</h3>
-            <input type="password" id="vault-input" placeholder="Enter Shadow Key..." 
-                   onkeypress="if(event.key === 'Enter') saveToVault()">
-            <button class="vault-btn" onclick="saveToVault()">ENCRYPT</button>
-            <p id="vault-status" style="font-size: 0.8em; color: #ff0055; margin-top: 10px;">Status: LOCKED</p>
+    <h1 class="header">🔱 MISSION XARVEX: ARKON DASHBOARD</h1>
+    <div class="terminal">
+        <div class="output-box" id="terminalOutput">
+            <p>🔱 ARKON: System Online. Waiting for Creator Authentication...</p>
+        </div>
+        <div class="input-area">
+            <input type="password" id="creatorPin" placeholder="Enter Secret PIN" class="pin-box">
+            <input type="text" id="commandInput" placeholder="Enter command (status, memory check)..." style="width: 50%;">
+            <button onclick="sendCommand()">EXECUTE</button>
         </div>
     </div>
 
     <script>
-        const term = document.getElementById('terminal');
-
-        async function runCommand() {
-            const input = document.getElementById('command-input');
-            const cmd = input.value;
-            if(!cmd) return;
-            term.innerHTML += `<br><span style="color: #fff;">> ${cmd}</span>`;
-            input.value = ''; 
-            const resp = await fetch('/arkon/power', {
+        function sendCommand() {
+            const pin = document.getElementById('creatorPin').value;
+            const cmd = document.getElementById('commandInput').value;
+            const output = document.getElementById('terminalOutput');
+            
+            fetch('/arkon/power', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({command: cmd})
+                body: JSON.stringify({pin: pin, command: cmd})
+            })
+            .then(res => res.json())
+            .then(data => {
+                output.innerHTML += `<p>> ${cmd}</p><p>${data.output}</p>`;
+                output.scrollTop = output.scrollHeight;
+                document.getElementById('commandInput').value = '';
+            })
+            .catch(err => {
+                output.innerHTML += `<p style="color: #ff0055;">❌ ERROR: Access Refused.</p>`;
             });
-            const data = await resp.json();
-            term.innerHTML += `<br>${data.output}`;
-            term.scrollTop = term.scrollHeight;
-        }
-
-        async function saveToVault() {
-            const input = document.getElementById('vault-input');
-            const key = input.value;
-            if(!key) return;
-            const resp = await fetch('/arkon/vault', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({key: key})
-            });
-            const data = await resp.json();
-            document.getElementById('vault-status').innerText = "Status: " + data.output;
-            input.value = '';
         }
     </script>
 </body>
