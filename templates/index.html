@@ -7,8 +7,8 @@
         body { background-color: #000; color: #00f2ff; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; }
         .terminal { width: 80%; border: 2px solid #00f2ff; padding: 20px; box-shadow: 0 0 20px #00f2ff; margin-top: 50px; background: rgba(0, 0, 0, 0.9); }
         .output-box { height: 300px; overflow-y: auto; border-bottom: 1px solid #00f2ff; margin-bottom: 20px; }
-        input { background: transparent; border: 1px solid #00f2ff; color: #fff; padding: 10px; width: 40%; }
-        .pin-box { width: 20%; border-color: #ff0055; }
+        input { background: transparent; border: 1px solid #00f2ff; color: #fff; padding: 10px; margin-right: 10px; }
+        .pin-box { width: 15%; border-color: #ff0055; text-align: center; }
         button { background: #00f2ff; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; }
         .header { text-align: center; text-shadow: 0 0 10px #00f2ff; }
     </style>
@@ -19,9 +19,9 @@
         <div class="output-box" id="terminalOutput">
             <p>🔱 ARKON: System Online. Waiting for Creator Authentication...</p>
         </div>
-        <div class="input-area">
-            <input type="password" id="creatorPin" placeholder="Enter Secret PIN" class="pin-box">
-            <input type="text" id="commandInput" placeholder="Enter command (status, memory check)..." style="width: 50%;">
+        <div class="input-area" style="display: flex; justify-content: space-between;">
+            <input type="password" id="creatorPin" placeholder="Secret PIN" class="pin-box">
+            <input type="text" id="commandInput" placeholder="Enter command (status, memory check)..." style="flex-grow: 1;">
             <button onclick="sendCommand()">EXECUTE</button>
         </div>
     </div>
@@ -39,12 +39,13 @@
             })
             .then(res => res.json())
             .then(data => {
-                output.innerHTML += `<p>> ${cmd}</p><p>${data.output}</p>`;
+                const color = data.output.startsWith('❌') ? '#ff0055' : '#00f2ff';
+                output.innerHTML += `<p style="color: #fff">> ${cmd}</p><p style="color: ${color}">${data.output}</p>`;
                 output.scrollTop = output.scrollHeight;
                 document.getElementById('commandInput').value = '';
             })
             .catch(err => {
-                output.innerHTML += `<p style="color: #ff0055;">❌ ERROR: Access Refused.</p>`;
+                output.innerHTML += `<p style="color: #ff0055;">❌ ERROR: Access Denied or System Offline.</p>`;
             });
         }
     </script>
