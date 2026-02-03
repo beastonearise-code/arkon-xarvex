@@ -5,11 +5,11 @@ import threading
 
 app = Flask(__name__)
 
-# మీ పక్కా URI (Updated based on image_d2c2df.jpg)
-DB_URI = "postgresql://postgres.vapgjswwceerkwtxd:krishnaMlk%40143@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
+# సవరించిన పక్కా URI (Added SSL Mode for stability)
+DB_URI = "postgresql://postgres.vapgjswwceerkwtxd:krishnaMlk%40143@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require"
 
 def init_db():
-    """డేటాబేస్ కనెక్షన్‌ను బ్యాక్‌గ్రౌండ్‌లో ప్రయత్నిస్తుంది [cite: 2026-02-03]"""
+    """డేటాబేస్ టేబుల్స్ ఏర్పాటు - అటానమస్ రిపేర్ [cite: 2026-01-31]"""
     try:
         conn = psycopg2.connect(DB_URI, connect_timeout=10)
         cur = conn.cursor()
@@ -17,11 +17,11 @@ def init_db():
         conn.commit()
         cur.close()
         conn.close()
-        print("🔱 ARKON: Eternal Memory Synced.", flush=True)
+        print("🔱 ARKON: Eternal Memory Synced Successfully.", flush=True)
     except Exception as e:
-        print(f"⚠️ ARKON NOTICE: DB Sync Pending. {e}", flush=True)
+        print(f"⚠️ ARKON NOTICE: DB Sync Pending. Error: {e}", flush=True)
 
-# Gunicorn కోసం ఇక్కడే థ్రెడ్ స్టార్ట్ చేస్తున్నాను [cite: 2026-02-03]
+# బ్యాక్‌గ్రౌండ్‌లో డేటాబేస్ సింక్ చేస్తుంది [cite: 2026-02-03]
 threading.Thread(target=init_db, daemon=True).start()
 
 @app.route('/')
@@ -34,8 +34,18 @@ def power():
     command = data.get("command", "").lower()
     
     if "memory check" in command:
-        return jsonify({"output": "🔱 ARKON: Supabase Neural Sync is ACTIVE. Memory stable."})
-    return jsonify({"output": f"🔱 ARKON: Command '{command}' logged."})
+        try:
+            # కనెక్షన్‌ను మళ్ళీ పరీక్షిస్తుంది [cite: 2026-02-03]
+            conn = psycopg2.connect(DB_URI, connect_timeout=5)
+            output = "🔱 ARKON: Supabase Neural Sync is ACTIVE. Memory is stable."
+            conn.close()
+        except Exception as e:
+            # అసలైన ఎర్రర్‌ను ఇక్కడ చూపిస్తుంది [cite: 2026-02-03]
+            output = f"❌ ARKON: Database Offline. Reason: {str(e)[:50]}..."
+    else:
+        output = f"🔱 ARKON: Command '{command}' logged in Core."
+        
+    return jsonify({"output": output})
 
 @app.route('/arkon/vault', methods=['POST'])
 def vault_manager():
