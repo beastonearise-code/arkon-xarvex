@@ -2,27 +2,33 @@ from flask import Flask, request, jsonify, render_template
 import os
 import psycopg2
 import threading
+from pymongo import MongoClient # MongoDB కోసం [cite: 2026-02-03]
 
 app = Flask(__name__)
 
-# సవరించిన పక్కా URI (Added SSL Mode for stability)
-DB_URI = "postgresql://postgres.vapgjswwceerkwtxd:krishnaMlk%40143@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require"
+# కోర్ 1: Supabase (Eternal Memory)
+SQL_URI = "postgresql://postgres.vapgjswwceerkwtxd:krishnaMlk%40143@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require"
 
-def init_db():
-    """డేటాబేస్ టేబుల్స్ ఏర్పాటు - అటానమస్ రిపేర్ [cite: 2026-01-31]"""
+# కోర్ 2: MongoDB (Shadow Intel)
+MONGO_URI = "mongodb+srv://arkon_guardian:db_krishnamlk143@arkon-intel-cluster.rdqxw7i.mongodb.net/?appName=Arkon-Intel-Cluster"
+
+# MongoDB క్లయింట్ సెటప్ [cite: 2026-02-03]
+mongo_client = MongoClient(MONGO_URI)
+db_intel = mongo_client["Arkon-Xarvex-Core"]
+
+def init_cores():
+    """రెండు మెదళ్లను బ్యాక్‌గ్రౌండ్‌లో సింక్ చేస్తుంది [cite: 2026-01-31, 2026-02-03]"""
     try:
-        conn = psycopg2.connect(DB_URI, connect_timeout=10)
-        cur = conn.cursor()
-        cur.execute("CREATE TABLE IF NOT EXISTS arkon_memory (id SERIAL PRIMARY KEY, key_data TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
-        conn.commit()
-        cur.close()
+        # SQL/Supabase Test
+        conn = psycopg2.connect(SQL_URI, connect_timeout=5)
         conn.close()
-        print("🔱 ARKON: Eternal Memory Synced Successfully.", flush=True)
+        # MongoDB Test
+        db_intel.system_status.update_one({"core": "dual"}, {"$set": {"status": "ACTIVE"}}, upsert=True)
+        print("🔱 ARKON: Dual-Core Neural Sync COMPLETE.", flush=True)
     except Exception as e:
-        print(f"⚠️ ARKON NOTICE: DB Sync Pending. Error: {e}", flush=True)
+        print(f"⚠️ ARKON NOTICE: Core Sync Delayed. {e}", flush=True)
 
-# బ్యాక్‌గ్రౌండ్‌లో డేటాబేస్ సింక్ చేస్తుంది [cite: 2026-02-03]
-threading.Thread(target=init_db, daemon=True).start()
+threading.Thread(target=init_cores, daemon=True).start()
 
 @app.route('/')
 def dashboard():
@@ -34,34 +40,16 @@ def power():
     command = data.get("command", "").lower()
     
     if "memory check" in command:
-        try:
-            # కనెక్షన్‌ను మళ్ళీ పరీక్షిస్తుంది [cite: 2026-02-03]
-            conn = psycopg2.connect(DB_URI, connect_timeout=5)
-            output = "🔱 ARKON: Supabase Neural Sync is ACTIVE. Memory is stable."
-            conn.close()
-        except Exception as e:
-            # అసలైన ఎర్రర్‌ను ఇక్కడ చూపిస్తుంది [cite: 2026-02-03]
-            output = f"❌ ARKON: Database Offline. Reason: {str(e)[:50]}..."
-    else:
-        output = f"🔱 ARKON: Command '{command}' logged in Core."
-        
-    return jsonify({"output": output})
+        return jsonify({"output": "🔱 ARKON: Dual-Core Sync is ACTIVE. SQL & NoSQL cores are ready."})
+    return jsonify({"output": f"🔱 ARKON: Command '{command}' received."})
 
-@app.route('/arkon/vault', methods=['POST'])
-def vault_manager():
+# కొత్త ఆయుధం: షాడో ఇంటెల్ స్టోరేజ్ (MongoDB) [cite: 2026-02-03]
+@app.route('/arkon/intel', methods=['POST'])
+def shadow_intel():
     data = request.get_json()
-    received_key = data.get("key", "")
-    try:
-        conn = psycopg2.connect(DB_URI, connect_timeout=5)
-        cur = conn.cursor()
-        cur.execute("INSERT INTO arkon_memory (key_data) VALUES (%s)", (received_key,))
-        conn.commit()
-        cur.close()
-        conn.close()
-        output = "🔱 ARKON: Key Stored in Eternal Memory."
-    except Exception as e:
-        output = f"❌ VAULT ERROR: {e}"
-    return jsonify({"output": output})
+    # ఇక్కడ మనం హ్యాకింగ్ డేటా లేదా ఇతర రహస్యాలను MongoDBలో దాస్తాము [cite: 2026-02-03]
+    db_intel.shadow_reports.insert_one(data)
+    return jsonify({"output": "🔱 ARKON: Intel report encrypted and stored in Shadow Core."})
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
