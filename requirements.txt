@@ -2,7 +2,7 @@ flask
 gunicorn
 psycopg2-binary
 pymongo[srv]
-pinecone-client
+pinecone
 google-genai
 openai
 groq
