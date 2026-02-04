@@ -3,3 +3,4 @@ gunicorn
 requests
 tavily-python
 exa_py
+psycopg2-binary
