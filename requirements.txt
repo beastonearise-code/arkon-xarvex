@@ -7,4 +7,6 @@ google-genai
 openai
 groq
 libsql-client
+redis
+cloudinary
 python-dotenv
