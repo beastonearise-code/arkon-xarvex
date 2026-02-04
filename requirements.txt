@@ -4,5 +4,7 @@ psycopg2-binary
 pymongo
 pinecone
 google-genai
-python-dotenv
+openai
+groq
 libsql-client
+python-dotenv
