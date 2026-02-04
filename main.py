@@ -20,7 +20,7 @@ try:
     cache = redis.from_url(os.getenv("REDIS_URL"))
     print("🔱 ARKON: Redis Bridge Online.", flush=True)
 except Exception as e:
-    print(f"❌ Redis Error: {e}", flush=True)
+    print(f"❌ Redis Connection Error: {e}", flush=True)
 
 # --- 3. గాడ్ ప్రొటోకాల్ (Self-Evolution Core) ---
 def init_god_protocol():
@@ -30,10 +30,10 @@ def init_god_protocol():
             # హోస్ట్ నేమ్ ఎర్రర్ రాకుండా కనెక్ట్ అవ్వడం
             conn = psycopg2.connect(DATABASE_URL, connect_timeout=10)
             conn.close()
-        # విజయవంతమైన మెసేజ్
-        print("🔱 ARKON: 18 Variables Synced. God Protocol Online.", flush=True)
+            # విజయవంతమైన మెసేజ్
+            print("🔱 ARKON: 18 Variables Synced. God Protocol Online.", flush=True)
     except Exception as e:
-        print(f"⚠️ Core Sync Notice: {e}", flush=True)
+        print(f"⚠️ Core Sync Warning: {e}", flush=True)
 
 # ప్రాసెస్ క్రాష్ అవ్వకుండా బ్యాక్ గ్రౌండ్ లో రన్ అవుతుంది
 threading.Thread(target=init_god_protocol, daemon=True).start()
@@ -42,7 +42,7 @@ threading.Thread(target=init_god_protocol, daemon=True).start()
 def status_tracker():
     """మనం అనుకున్న ఫీచర్స్ ట్రాకింగ్ సిస్టమ్"""
     return jsonify({
-        "Arkon_Mode": "🔱 GOD_MODE_ACTIVE",
+        "Status": "🔱 GOD_MODE_ACTIVE",
         "Variables": "18_SYNCED",
         "Shield_Status": "Hacking_Defense_Ready",
         "Self_Evolution": "Armed_via_GitHub_Actions"
