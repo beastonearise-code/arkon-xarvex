@@ -2,5 +2,6 @@ flask
 gunicorn
 psycopg2-binary
 pymongo
-pinecone-client
-google-generativeai
+pinecone
+google-genai
+python-dotenv
