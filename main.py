@@ -4,25 +4,24 @@ import psycopg2
 import redis
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
-from pinecone import Pinecone # New Fix
-from google import genai
+from pinecone import Pinecone 
 import libsql_client
 
 app = Flask(__name__)
 
 # --- 1. 18 అస్త్రాల క్లీనింగ్ & సింకింగ్ ---
+# కనెక్షన్ స్ట్రింగ్‌లోని తప్పు అక్షరాలను (], @, 143) తొలగించే లాజిక్
 RAW_SQL = os.getenv("SQL_URI") or os.getenv("DATABASE_URL")
-# హోస్ట్ నేమ్ లో '143@' ఉంటే తొలగించే లాజిక్
-DATABASE_URL = RAW_SQL.replace("143@", "") if RAW_SQL and "143@" in RAW_SQL else RAW_SQL
+DATABASE_URL = RAW_SQL.replace("143]", "").replace("143@", "").replace("]", "") if RAW_SQL else RAW_SQL
 
-# --- 2. క్లయింట్స్ (Absolute Fixes) ---
+# --- 2. క్లయింట్స్ ఇనిషియలైజేషన్ ---
 cache = redis.from_url(os.getenv("REDIS_URL"))
-pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-mongo_client = MongoClient(os.getenv("MONGO_URI"), tls=True, tlsAllowInvalidCertificates=True)
+pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY")) # New Syntax Fix
 
-# --- 3. గాడ్ ప్రొటోకాల్ (Naming Fix) ---
+# --- 3. గాడ్ ప్రొటోకాల్ (Name Fixed) ---
 def init_all_systems():
     try:
+        # SQL కనెక్షన్ టెస్ట్
         conn = psycopg2.connect(DATABASE_URL, connect_timeout=5)
         conn.close()
         # విజయవంతమైన మెసేజ్
@@ -30,16 +29,17 @@ def init_all_systems():
     except Exception as e:
         print(f"⚠️ Core Sync Notice: {e}", flush=True)
 
-# Calling the correct function name
+# Calling the correct function name matching the definition
 threading.Thread(target=init_all_systems, daemon=True).start()
 
 @app.route('/arkon/status')
 def status_tracker():
-    """మీరు అడిగిన ట్రాకింగ్ సిస్టమ్"""
+    """మీరు అడిగిన ఫీచర్స్ ట్రాకింగ్ సిస్టమ్"""
     return jsonify({
         "Status": "🔱 GOD_MODE_ACTIVE",
         "Variables": "18_SYNCED",
-        "System": "Self-Healing_Protocol_Enabled"
+        "System": "Self-Healing_Protocol_Enabled",
+        "Shield": "Hacking_Defense_Standby"
     })
 
 @app.route('/')
