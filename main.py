@@ -7,7 +7,7 @@ from pinecone import Pinecone
 
 app = Flask(__name__)
 
-# --- 1. 18 అస్త్రాల క్లీనింగ్ & సింకింగ్ ---
+# --- 1. 18 అస్త్రాల సెల్ఫ్-క్లీనింగ్ & సింకింగ్ ---
 # కనెక్షన్ స్ట్రింగ్‌లోని తప్పు అక్షరాలను (], @, 143) ఆటోమేటిక్ గా తొలగించే లాజిక్
 RAW_SQL = os.getenv("SQL_URI") or os.getenv("DATABASE_URL")
 if RAW_SQL:
@@ -16,16 +16,19 @@ else:
     DATABASE_URL = None
 
 # --- 2. క్లయింట్స్ ఇనిషియలైజేషన్ ---
-cache = redis.from_url(os.getenv("REDIS_URL"))
-pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY")) # New Syntax Fix
+try:
+    cache = redis.from_url(os.getenv("REDIS_URL"))
+    print("🔱 ARKON: Redis Bridge Online.", flush=True)
+except Exception as e:
+    print(f"❌ Redis Error: {e}", flush=True)
 
-# --- 3. గాడ్ ప్రొటోకాల్ (Self-Healing Core) ---
+# --- 3. గాడ్ ప్రొటోకాల్ (Self-Evolution Core) ---
 def init_god_protocol():
     """18 అస్త్రాల సింకింగ్ మరియు ఎవల్యూషన్ ట్రాకర్ [cite: 2026-02-04]"""
     try:
         if DATABASE_URL:
             # హోస్ట్ నేమ్ ఎర్రర్ రాకుండా కనెక్ట్ అవ్వడం
-            conn = psycopg2.connect(DATABASE_URL, connect_timeout=5)
+            conn = psycopg2.connect(DATABASE_URL, connect_timeout=10)
             conn.close()
         # విజయవంతమైన మెసేజ్
         print("🔱 ARKON: 18 Variables Synced. God Protocol Online.", flush=True)
@@ -37,10 +40,12 @@ threading.Thread(target=init_god_protocol, daemon=True).start()
 
 @app.route('/arkon/status')
 def status_tracker():
+    """మనం అనుకున్న ఫీచర్స్ ట్రాకింగ్ సిస్టమ్"""
     return jsonify({
-        "Status": "🔱 GOD_MODE_ACTIVE",
+        "Arkon_Mode": "🔱 GOD_MODE_ACTIVE",
         "Variables": "18_SYNCED",
-        "Shield": "Hacking_Defense_Ready"
+        "Shield_Status": "Hacking_Defense_Ready",
+        "Self_Evolution": "Armed_via_GitHub_Actions"
     })
 
 @app.route('/')
