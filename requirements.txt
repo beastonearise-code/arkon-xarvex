@@ -5,3 +5,4 @@ pymongo
 pinecone
 google-genai
 python-dotenv
+libsql-client
