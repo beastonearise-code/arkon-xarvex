@@ -1,3 +1,4 @@
 requests
+gunicorn
 tavily-python
 exa_py
