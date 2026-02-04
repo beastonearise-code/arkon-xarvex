@@ -1,12 +1,7 @@
 flask
 gunicorn
-requests
 psycopg2-binary
 pymongo
-pinecone-client
-redis
-tavily-python
-exa_py
 google-generativeai
 groq
 python-dotenv
