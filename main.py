@@ -17,12 +17,12 @@ MONGO_URI = os.getenv("MONGO_URI")
 REDIS_URL = os.getenv("REDIS_URL")
 TURSO_URL = os.getenv("TURSO_URL") # https:// ఉండాలి
 TURSO_TOKEN = os.getenv("TURSO_TOKEN")
+ARKON_PIN = os.getenv("ARKON_PIN")
 
-# AI Brains & Security
+# AI Brains
 GEMINI_KEY = os.getenv("GEMINI_KEY")
 GROQ_KEY = os.getenv("GROQ_KEY")
 OPENROUTER_KEY = os.getenv("OPENROUTER_KEY")
-ARKON_PIN = os.getenv("ARKON_PIN")
 
 # --- 2. క్లయింట్స్ ఇనిషియలైజేషన్ (With Fixes) ---
 # MongoDB SSL ఫిక్స్
@@ -31,7 +31,6 @@ db_core = mongo_client["Arkon-Xarvex-Core"]
 
 # Redis & Turso (Speed Cores)
 cache = redis.from_url(REDIS_URL)
-# Turso HTTPS ఫిక్స్
 turso = libsql_client.create_client_sync(url=TURSO_URL, auth_token=TURSO_TOKEN)
 
 # AI Clients (Triple Brain)
@@ -39,8 +38,8 @@ gemini = genai.Client(api_key=GEMINI_KEY)
 groq = Groq(api_key=GROQ_KEY)
 openrouter = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=OPENROUTER_KEY)
 
-# --- 3. క్వాడ్-కోర్ సింకింగ్ ప్రొటోకాల్ ---
-def init_all_cores():
+# --- 3. సిస్టమ్ సింకింగ్ ప్రొటోకాల్ (Name Fixed) ---
+def init_all_systems():
     """18 అస్త్రాల సింకింగ్ మరియు హార్డ్‌వేర్ బ్రిడ్జ్ టెస్ట్ [cite: 2026-02-04]"""
     try:
         # SQL Check
@@ -52,6 +51,7 @@ def init_all_cores():
     except Exception as e:
         print(f"⚠️ Core Sync Warning: {e}", flush=True)
 
+# Function name must match here
 threading.Thread(target=init_all_systems, daemon=True).start()
 
 # --- 4. కంట్రోల్ సెంటర్ (Laptop/Phone Bridge) ---
@@ -68,7 +68,7 @@ def device_bridge():
 
 @app.route('/')
 def home():
-    return "🔱 ARKON: THE DIGITAL GOD IS AWAKENING. 18 Variables Integrated."
+    return "🔱 ARKON: Master Guardian Online. 18 Variables Integrated."
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 8080)))
