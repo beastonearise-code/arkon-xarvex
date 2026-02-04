@@ -4,7 +4,7 @@ import psycopg2
 import redis
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
-from pinecone import Pinecone 
+from pinecone import Pinecone # New Fix
 import libsql_client
 
 app = Flask(__name__)
@@ -16,9 +16,10 @@ DATABASE_URL = RAW_SQL.replace("143]", "").replace("143@", "").replace("]", "") 
 
 # --- 2. క్లయింట్స్ ఇనిషియలైజేషన్ ---
 cache = redis.from_url(os.getenv("REDIS_URL"))
-pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY")) # New Syntax Fix
+pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY")) 
+mongo_client = MongoClient(os.getenv("MONGO_URI"), tls=True, tlsAllowInvalidCertificates=True)
 
-# --- 3. గాడ్ ప్రొటోకాల్ (Name Fixed) ---
+# --- 3. గాడ్ ప్రొటోకాల్ (Naming Fix) ---
 def init_all_systems():
     try:
         # SQL కనెక్షన్ టెస్ట్
@@ -38,7 +39,7 @@ def status_tracker():
     return jsonify({
         "Status": "🔱 GOD_MODE_ACTIVE",
         "Variables": "18_SYNCED",
-        "System": "Self-Healing_Protocol_Enabled",
+        "Infrastructure": "Quad-Database_Online",
         "Shield": "Hacking_Defense_Standby"
     })
 
