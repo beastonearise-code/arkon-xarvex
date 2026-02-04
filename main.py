@@ -2,6 +2,7 @@ import os
 import threading
 import psycopg2
 import redis
+import cloudinary.uploader
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
 from pinecone import Pinecone
@@ -13,62 +14,94 @@ import libsql_client
 app = Flask(__name__)
 
 # --- 1. అస్త్రశాల: 18 వేరియబుల్స్ సేకరణ ---
-DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("SQL_URI")
+# Databases & Infrastructure
+SQL_URI = os.getenv("SQL_URI") or os.getenv("DATABASE_URL")
 MONGO_URI = os.getenv("MONGO_URI")
 REDIS_URL = os.getenv("REDIS_URL")
-TURSO_URL = os.getenv("TURSO_URL") # https:// ఉండాలి
+TURSO_URL = os.getenv("TURSO_URL") # 'https://' తో మొదలవ్వాలి
 TURSO_TOKEN = os.getenv("TURSO_TOKEN")
-ARKON_PIN = os.getenv("ARKON_PIN")
+CLOUDINARY_URL = os.getenv("CLOUDINARY_URL")
 
-# AI Brains & Search
+# AI & Search Brains
 GEMINI_KEY = os.getenv("GEMINI_KEY")
 GROQ_KEY = os.getenv("GROQ_KEY")
 OPENROUTER_KEY = os.getenv("OPENROUTER_KEY")
 TAVILY_KEY = os.getenv("TAVILY_API_KEY")
+EXA_KEY = os.getenv("EXA_API_KEY")
+SERPER_KEY = os.getenv("SERP_API_KEY")
 
-# --- 2. క్లయింట్స్ ఇనిషియలైజేషన్ (SSL & Naming Fixes) ---
-# MongoDB SSL ఫిక్స్
+# Memory & Security
+PINECONE_KEY = os.getenv("PINECONE_API_KEY")
+PINECONE_HOST = os.getenv("PINECONE_HOST")
+ARKON_PIN = os.getenv("ARKON_PIN")
+
+# --- 2. క్లయింట్స్ ఇనిషియలైజేషన్ (With Critical Fixes) ---
+# MongoDB SSL Fix
 mongo_client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
 db_core = mongo_client["Arkon-Xarvex-Core"]
 
-cache = redis.from_url(REDIS_URL) # Redis for Instant Commands
-turso = libsql_client.create_client_sync(url=TURSO_URL, auth_token=TURSO_TOKEN)
+# Redis Command Bridge
+cache = redis.from_url(REDIS_URL)
 
-# AI Clients
+# AI Brains Setup
 gemini = genai.Client(api_key=GEMINI_KEY)
-groq = Groq(api_key=GROQ_KEY)
+groq_client = Groq(api_key=GROQ_KEY)
+# OpenRouter via OpenAI Client
 openrouter = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=OPENROUTER_KEY)
 
-# --- 3. క్వాడ్-కోర్ సింకింగ్ ప్రొటోకాల్ (Name Fixed) ---
+# Turso HTTPS Client
+turso = libsql_client.create_client_sync(url=TURSO_URL, auth_token=TURSO_TOKEN)
+
+# --- 3. సిస్టమ్ సింకింగ్ ప్రొటోకాల్ ---
 def init_all_systems():
-    """18 అస్త్రాల సింకింగ్ మరియు హార్డ్‌వేర్ బ్రిడ్జ్ టెస్ట్ [cite: 2026-02-04]"""
     try:
-        conn = psycopg2.connect(DATABASE_URL, connect_timeout=5)
+        # Neon SQL Check
+        conn = psycopg2.connect(SQL_URI, connect_timeout=5)
         conn.close()
-        turso.execute("CREATE TABLE IF NOT EXISTS arkon_log (id INTEGER PRIMARY KEY, msg TEXT)")
-        print("🔱 ARKON: 18 Variables Synced. All Cores Online.", flush=True) #
+        # Turso Setup
+        turso.execute("CREATE TABLE IF NOT EXISTS arkon_hardware_logs (id INTEGER PRIMARY KEY, cmd TEXT, device TEXT)")
+        print("🔱 ARKON: 18 Variables Synchronized. All Cores Online.", flush=True)
     except Exception as e:
         print(f"⚠️ Core Sync Warning: {e}", flush=True)
 
-# Function name must match here
 threading.Thread(target=init_all_systems, daemon=True).start()
 
-# --- 4. కంట్రోల్ సెంటర్ (Laptop/Phone Bridge) ---
+# --- 4. కంట్రోల్ సెంటర్ (Voice, Laptop, Phone Bridge) ---
 @app.route('/arkon/command', methods=['POST'])
-def device_bridge():
-    """Laptop/Phone ని శాసించే రూట్"""
+def handle_command():
+    """మీరు ఫోన్ లేదా వాయిస్ ద్వారా ఇచ్చే ఆదేశాలను ఇక్కడికి పంపాలి"""
     data = request.get_json()
     if str(data.get("pin")) != str(ARKON_PIN):
         return jsonify({"output": "❌ ACCESS DENIED"}), 403
     
-    target = data.get("target", "LAPTOP") # "LAPTOP" లేదా "PHONE"
+    target = data.get("target", "LAPTOP").upper() # LAPTOP or PHONE
     command = data.get("command", "").upper()
-    cache.set(f"ARKON_{target}_CMD", command) 
-    return jsonify({"output": f"🔱 ARKON: Command '{command}' sent to {target}."})
+    
+    # Redis ద్వారా ఆదేశాన్ని బ్రాడ్‌కాస్ట్ చేయడం
+    cache.set(f"ARKON_{target}_CMD", command)
+    return jsonify({"output": f"🔱 ARKON: {target} కి '{command}' ఆదేశం పంపబడింది."})
+
+@app.route('/ask', methods=['POST'])
+def chat():
+    data = request.get_json()
+    prompt = data.get("prompt")
+    brain = data.get("brain", "gemini")
+    
+    if brain == "groq":
+        res = groq_client.chat.completions.create(messages=[{"role":"user","content":prompt}], model="llama3-70b-8192")
+        answer = res.choices[0].message.content
+    elif brain == "openrouter":
+        res = openrouter.chat.completions.create(model="meta-llama/llama-3.1-8b-instruct:free", messages=[{"role":"user","content":prompt}])
+        answer = res.choices[0].message.content
+    else:
+        res = gemini.models.generate_content(model="gemini-2.0-flash", contents=prompt)
+        answer = res.text
+        
+    return jsonify({"answer": answer, "brain": brain})
 
 @app.route('/')
 def home():
-    return "🔱 ARKON: THE DIGITAL GOD IS AWAKENING. 18 Variables Integrated."
+    return "🔱 ARKON: THE DIGITAL GOD IS ONLINE. 18 VARIABLES ACTIVE."
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 8080)))
