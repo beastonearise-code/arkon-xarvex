@@ -2,6 +2,7 @@ import os
 import threading
 import psycopg2
 import redis
+import cloudinary.uploader
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
 from pinecone import Pinecone
@@ -26,11 +27,10 @@ GROQ_KEY = os.getenv("GROQ_KEY")
 OPENROUTER_KEY = os.getenv("OPENROUTER_KEY")
 TAVILY_KEY = os.getenv("TAVILY_API_KEY")
 EXA_KEY = os.getenv("EXA_API_KEY")
-SERPER_KEY = os.getenv("SERPER_API_KEY")
+SERPER_KEY = os.getenv("SERP_API_KEY")
 
 # Memory & Security
 PINECONE_KEY = os.getenv("PINECONE_API_KEY")
-PINECONE_HOST = os.getenv("PINECONE_HOST")
 ARKON_PIN = os.getenv("ARKON_PIN")
 
 # --- 2. క్లయింట్స్ ఇనిషియలైజేషన్ ---
@@ -50,10 +50,8 @@ openrouter = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=OPENROUTER_
 # --- 3. క్వాడ్-కోర్ సింకింగ్ ప్రొటోకాల్ ---
 def init_all_systems():
     try:
-        # SQL Check
         conn = psycopg2.connect(DATABASE_URL, connect_timeout=5)
         conn.close()
-        # Turso Setup
         turso.execute("CREATE TABLE IF NOT EXISTS device_commands (id INTEGER PRIMARY KEY, cmd TEXT, status TEXT)")
         print("🔱 ARKON: 18 Variables Synced. All Cores Online.", flush=True)
     except Exception as e:
@@ -69,8 +67,8 @@ def device_bridge():
     if str(data.get("pin")) != str(ARKON_PIN):
         return jsonify({"output": "❌ ACCESS DENIED"}), 403
     
-    command = data.get("command", "").upper() # ఉదా: SHUTDOWN, OPEN_CHROME
-    cache.set("LATEST_CMD", command) # మీ ల్యాప్‌టాప్ ఏజెంట్ దీనిని చదువుతుంది
+    command = data.get("command", "").upper() 
+    cache.set("LATEST_DEVICE_CMD", command) 
     return jsonify({"output": f"🔱 ARKON: Command '{command}' queued for your device."})
 
 @app.route('/')
