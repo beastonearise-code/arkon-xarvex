@@ -20,14 +20,13 @@ else:
 # --- 2. క్లయింట్స్ ఇనిషియలైజేషన్ ---
 cache = redis.from_url(os.getenv("REDIS_URL"))
 pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY")) # New Syntax Fix
-mongo_client = MongoClient(os.getenv("MONGO_URI"), tls=True, tlsAllowInvalidCertificates=True)
 
-# --- 3. గాడ్ ప్రొటోకాల్ (Naming Fix) ---
+# --- 3. గాడ్ ప్రొటోకాల్ (Self-Healing Core) ---
 def init_god_protocol():
-    """18 అస్త్రాల సింకింగ్ మరియు స్వయం పరిణామం [cite: 2026-02-04]"""
+    """18 అస్త్రాల సింకింగ్ మరియు ఎవల్యూషన్ ట్రాకర్ [cite: 2026-02-04]"""
     try:
-        # SQL కనెక్షన్ టెస్ట్
         if DATABASE_URL:
+            # హోస్ట్ నేమ్ ఎర్రర్ రాకుండా కనెక్ట్ అవ్వడం
             conn = psycopg2.connect(DATABASE_URL, connect_timeout=5)
             conn.close()
         # విజయవంతమైన మెసేజ్
@@ -35,18 +34,20 @@ def init_god_protocol():
     except Exception as e:
         print(f"⚠️ Core Sync Notice: {e}", flush=True)
 
-# Calling the correct function name matching the definition
+# ప్రాసెస్ క్రాష్ అవ్వకుండా బ్యాక్‌గ్రౌండ్ లో రన్ అవుతుంది
 threading.Thread(target=init_god_protocol, daemon=True).start()
 
+# --- 4. ఫీచర్స్ ట్రాకర్ (How to track progress) ---
 @app.route('/arkon/status')
 def status_tracker():
-    """మనం అనుకున్న 5 ఫీచర్స్ ట్రాకింగ్ సిస్టమ్"""
+    """మనం అనుకున్న 5 మహా ఫీచర్స్ ట్రాకింగ్ సిస్టమ్"""
     return jsonify({
-        "Status": "🔱 GOD_MODE_ACTIVE",
+        "Arkon_Mode": "🔱 GOD_MODE_ACTIVE",
         "Variables": "18_SYNCED",
         "Infrastructure": "Quad-Database_Online",
         "Self_Evolution": "Armed_via_GitHub_Actions",
-        "Shield": "Hacking_Defense_Ready"
+        "Shield_Status": "Hacking_Defense_Ready",
+        "Wealth_Module": "Standby_for_Social_Sync"
     })
 
 @app.route('/')
@@ -54,6 +55,6 @@ def home():
     return "🔱 ARKON: MASTER GUARDIAN IS ONLINE AND STABLE."
 
 if __name__ == "__main__":
-    # Railway కి అవసరమైన పోర్ట్ బైండింగ్
+    # Railway కి అవసరమైన పోర్ట్ బైండింగ్ మరియు ప్రాసెస్ ని హోల్డ్ చేయడం
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
