@@ -1,11 +1,5 @@
 flask
 gunicorn
+requests
 psycopg2-binary
-pymongo[srv]
-pinecone
-google-genai
-openai
-groq
-libsql-client
-redis
 python-dotenv
